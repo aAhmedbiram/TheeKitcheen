@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card glass-card">
+        <div class="auth-header">
+            <h2 data-i18n="signin_title">تسجيل الدخول</h2>
+            <p data-i18n="signin_subtitle">ادخل باستخدام البريد أو رقم الموبايل لمتابعة طلباتك.</p>
+        </div>
+
+        <form class="form-grid" id="signin-form">
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="login_id" data-i18n="label_login_id">البريد الإلكتروني أو رقم الموبايل</label>
+                    <input type="text" id="login_id" name="login_id" required placeholder="you@example.com / 01XXXXXXXXX">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="login_password" data-i18n="label_password">كلمة السر</label>
+                    <input type="password" id="login_password" name="password" required>
+                </div>
+            </div>
+
+            <div class="form-row auth-footer-text between">
+                <label class="checkbox">
+                    <input type="checkbox" id="remember_me">
+                    <span data-i18n="signin_remember_me">تذكرني في هذا الجهاز</span>
+                </label>
+                <a href="{{ url_for('forgot_password') }}" class="link" data-i18n="signin_forgot_password">
+                    نسيت كلمة السر؟
+                </a>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="btn-primary btn-full" data-i18n="signin_cta">
+                    دخول
+                </button>
+            </div>
+
+            <div class="form-row auth-footer-text">
+                <span data-i18n="signin_no_account">لسه ماعندكش حساب؟</span>
+                <a href="{{ url_for('signup') }}" class="link" data-i18n="signin_link_signup">إنشاء حساب جديد</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+

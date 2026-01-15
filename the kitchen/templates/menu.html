@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h2 data-i18n="menu_title">المنيو</h2>
+        <p data-i18n="menu_subtitle">اختار الأكلات اللي تحبها وسيب الباقي علينا.</p>
+    </div>
+    <div class="page-header-actions">
+        <input type="search" class="search-input" placeholder="ابحث عن طبق..." data-i18n-placeholder="menu_search_placeholder">
+        <select class="filter-select" data-i18n-placeholder="menu_filter_placeholder">
+            <option value="all" data-i18n="menu_filter_all">كل الأطباق</option>
+            <option value="main" data-i18n="menu_filter_main">أطباق رئيسية</option>
+            <option value="soup" data-i18n="menu_filter_soup">شوربة</option>
+            <option value="salad" data-i18n="menu_filter_salad">سلطات</option>
+            <option value="dessert" data-i18n="menu_filter_dessert">حلويات</option>
+        </select>
+    </div>
+</section>
+
+<section class="cards-grid" id="menu-grid">
+    <!-- Sample product card 1 -->
+    <article class="product-card glass-card" data-category="main">
+        <div class="product-image-placeholder">🍗</div>
+        <div class="product-content">
+            <h3 data-i18n="product_fatta_title">فتة لحمة بلدي</h3>
+            <p class="product-description" data-i18n="product_fatta_desc">
+                لحمة بلدي مستوية على النار الهادية مع رز أبيض وعيش محمّص وصوص ثوم بيتي.
+            </p>
+            <div class="product-meta-row">
+                <span class="badge" data-i18n="meta_portions_3">تكفي 3 أفراد</span>
+                <span class="badge" data-i18n="meta_prep_45">تحضير: 45 دقيقة</span>
+            </div>
+            <div class="product-footer">
+                <div class="price-group">
+                    <span class="price-main">250 EGP</span>
+                    <span class="price-note" data-i18n="meta_price_note">السعر يشمل التغليف</span>
+                </div>
+                <button class="btn-primary btn-sm add-to-cart" data-product-id="1" data-i18n="btn_add_to_cart">
+                    أضف للسلة
+                </button>
+            </div>
+        </div>
+    </article>
+
+    <!-- Sample product card 2 -->
+    <article class="product-card glass-card" data-category="salad">
+        <div class="product-image-placeholder">🥗</div>
+        <div class="product-content">
+            <h3 data-i18n="product_tabbouleh_title">تبولة شامية</h3>
+            <p class="product-description" data-i18n="product_tabbouleh_desc">
+                بقدونس فريش، طماطم، برغل ناعم، مع عصير ليمون وزيت زيتون بكر.
+            </p>
+            <div class="product-meta-row">
+                <span class="badge" data-i18n="meta_portions_2">تكفي 2 أفراد</span>
+                <span class="badge" data-i18n="meta_prep_20">تحضير: 20 دقيقة</span>
+            </div>
+            <div class="product-footer">
+                <div class="price-group">
+                    <span class="price-main">90 EGP</span>
+                </div>
+                <button class="btn-primary btn-sm add-to-cart" data-product-id="2" data-i18n="btn_add_to_cart">
+                    أضف للسلة
+                </button>
+            </div>
+        </div>
+    </article>
+
+    <!-- Sample product card 3 -->
+    <article class="product-card glass-card" data-category="dessert">
+        <div class="product-image-placeholder">🍮</div>
+        <div class="product-content">
+            <h3 data-i18n="product_omali_title">أم علي</h3>
+            <p class="product-description" data-i18n="product_omali_desc">
+                رقائق جلاش بالحليب والمكسرات، مخبوزة لحد ما توصل لأحلى لون وطعم.
+            </p>
+            <div class="product-meta-row">
+                <span class="badge" data-i18n="meta_portions_4">تكفي 4 أفراد</span>
+                <span class="badge" data-i18n="meta_prep_30">تحضير: 30 دقيقة</span>
+            </div>
+            <div class="product-footer">
+                <div class="price-group">
+                    <span class="price-main">130 EGP</span>
+                </div>
+                <button class="btn-primary btn-sm add-to-cart" data-product-id="3" data-i18n="btn_add_to_cart">
+                    أضف للسلة
+                </button>
+            </div>
+        </div>
+    </article>
+</section>
+{% endblock %}
+
+

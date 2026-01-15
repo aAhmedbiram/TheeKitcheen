@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h2 data-i18n="cart_title">السلة</h2>
+        <p data-i18n="cart_subtitle">راجع طلبك وعدّل الكميات قبل إتمام الشراء.</p>
+    </div>
+</section>
+
+<section class="cart-layout">
+    <div class="cart-items glass-card" id="cart-items">
+        <!-- Cart items will be rendered by JS -->
+    </div>
+
+    <aside class="cart-summary glass-card">
+        <h3 data-i18n="cart_summary_title">ملخص الطلب</h3>
+        <div class="summary-row">
+            <span data-i18n="cart_items_count">عدد العناصر</span>
+            <span id="summary-count">0</span>
+        </div>
+        <div class="summary-row">
+            <span data-i18n="cart_subtotal">إجمالي فرعي</span>
+            <span id="summary-subtotal">0 EGP</span>
+        </div>
+        <div class="summary-row">
+            <span data-i18n="cart_delivery">تكلفة التوصيل</span>
+            <span id="summary-delivery">30 EGP</span>
+        </div>
+        <div class="summary-row total">
+            <span data-i18n="cart_total">الإجمالي الكلي</span>
+            <span id="summary-total">0 EGP</span>
+        </div>
+
+        <div class="payment-methods">
+            <h4 data-i18n="cart_payment_title">طريقة الدفع</h4>
+            <label class="radio">
+                <input type="radio" name="payment" value="instapay" checked>
+                <span data-i18n="payment_instapay">إنستاباي</span>
+            </label>
+            <label class="radio">
+                <input type="radio" name="payment" value="wallet">
+                <span data-i18n="payment_wallet">محفظة إلكترونية</span>
+            </label>
+            <label class="radio">
+                <input type="radio" name="payment" value="cod">
+                <span data-i18n="payment_cod">كاش عند الاستلام</span>
+            </label>
+        </div>
+
+        <button class="btn-primary btn-full" id="checkout-btn" data-i18n="cart_checkout_cta">
+            إتمام الطلب
+        </button>
+        <p class="field-hint" data-i18n="cart_checkout_note">
+            سيتم تأكيد الطلب عن طريق رسالة على الموبايل أو البريد الإلكتروني.
+        </p>
+    </aside>
+</section>
+{% endblock %}
+
+

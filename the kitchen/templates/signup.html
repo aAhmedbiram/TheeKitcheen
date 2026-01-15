@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card glass-card">
+        <div class="auth-header">
+            <h2 data-i18n="signup_title">إنشاء حساب جديد</h2>
+            <p data-i18n="signup_subtitle">سجّل بياناتك لطلب أكلات بيتية بسهولة وسرعة.</p>
+        </div>
+
+        <form class="form-grid" id="signup-form">
+            <div class="form-row two-cols">
+                <div class="form-field">
+                    <label for="first_name" data-i18n="label_first_name">الاسم الأول</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="أحمد" required>
+                </div>
+                <div class="form-field">
+                    <label for="last_name" data-i18n="label_last_name">اسم العائلة</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="محمد" required>
+                </div>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="form-field">
+                    <label for="phone" data-i18n="label_phone">رقم الموبايل</label>
+                    <input type="tel" id="phone" name="phone" placeholder="01XXXXXXXXX" required>
+                    <small class="field-hint" data-i18n="hint_phone">سنستخدمه لتأكيد الطلبات وتحديث حالتها.</small>
+                </div>
+                <div class="form-field">
+                    <label for="email" data-i18n="label_email">البريد الإلكتروني</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="address" data-i18n="label_address">العنوان بالتفصيل</label>
+                    <textarea id="address" name="address" rows="2" placeholder="الحي، اسم الشارع، رقم العمارة، الدور والشقة" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-row two-cols">
+                <div class="form-field">
+                    <label for="password" data-i18n="label_password">كلمة السر</label>
+                    <input type="password" id="password" name="password" minlength="6" required>
+                    <small class="field-hint" data-i18n="hint_password">يُفضل أن تحتوي على حروف وأرقام وعلامات.</small>
+                </div>
+                <div class="form-field">
+                    <label for="confirm_password" data-i18n="label_confirm_password">تأكيد كلمة السر</label>
+                    <input type="password" id="confirm_password" name="confirm_password" minlength="6" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label class="checkbox">
+                    <input type="checkbox" id="accept_terms" required>
+                    <span data-i18n="signup_accept_terms">
+                        أوافق على شروط الاستخدام وسياسة الخصوصية.
+                    </span>
+                </label>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="btn-primary btn-full" data-i18n="signup_cta">
+                    إنشاء الحساب
+                </button>
+            </div>
+
+            <div class="form-row auth-footer-text">
+                <span data-i18n="signup_have_account">لديك حساب بالفعل؟</span>
+                <a href="{{ url_for('signin') }}" class="link" data-i18n="signup_link_signin">تسجيل الدخول</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+

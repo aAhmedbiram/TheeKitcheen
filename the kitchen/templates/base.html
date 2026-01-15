@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Kitchen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="theme-light" data-lang="ar">
+    <div class="background-gradient"></div>
+    <header class="navbar glass-card">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="The Kitchen Logo" class="logo-img"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
+            <span class="logo-icon" style="display: none;">🍲</span>
+            <span class="logo-text">
+                <span class="logo-main" data-i18n="brand_name">The Kitchen</span>
+                <span class="logo-sub" data-i18n="brand_tagline">أكل بيتى بطعم الدار</span>
+            </span>
+        </div>
+        <nav class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-link" data-i18n="nav_home">الرئيسية</a>
+            <a href="{{ url_for('menu') }}" class="nav-link" data-i18n="nav_menu">المنيو</a>
+            <a href="{{ url_for('cart') }}" class="nav-link" data-i18n="nav_cart">السلة</a>
+        </nav>
+        <div class="nav-actions">
+            <button class="btn-ghost" id="lang-toggle" aria-label="Toggle Language">
+                <span class="lang-ar">العربية</span>
+                <span class="divider">|</span>
+                <span class="lang-en">EN</span>
+            </button>
+            <a href="{{ url_for('signin') }}" class="btn-outline" data-i18n="nav_signin">تسجيل الدخول</a>
+            <a href="{{ url_for('signup') }}" class="btn-primary" data-i18n="nav_signup">إنشاء حساب</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer glass-card">
+        <div class="footer-col">
+            <h4 data-i18n="footer_about_title">عن The Kitchen</h4>
+            <p data-i18n="footer_about_text">
+                The Kitchen منصة لطلب الأكل البيتي الطازج من أمهات وطهاة محترفين، مباشرة لبيتك.
+            </p>
+        </div>
+        <div class="footer-col">
+            <h4 data-i18n="footer_links_title">روابط سريعة</h4>
+            <a href="{{ url_for('menu') }}" data-i18n="footer_link_menu">تصفح المنيو</a>
+            <a href="{{ url_for('admin_panel') }}" data-i18n="footer_link_admin">لوحة التحكم</a>
+        </div>
+        <div class="footer-col">
+            <h4 data-i18n="footer_contact_title">تواصل معنا</h4>
+            <p>WhatsApp: <span dir="ltr">+20 100 000 0000</span></p>
+            <p data-i18n="footer_working_hours">يومياً من 10 صباحًا حتى 11 مساءً</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

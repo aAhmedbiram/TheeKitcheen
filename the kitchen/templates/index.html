@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-content glass-card">
+        <h1 class="hero-title" data-i18n="hero_title">
+            أكل بيتي طازج<br>يوصل لحد باب بيتك
+        </h1>
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+            اختار من بين عشرات الأكلات البيتية المحضّرة بحب من أشطر الشيفات في منطقتك.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('menu') }}" class="btn-primary btn-lg" data-i18n="hero_cta_primary">
+                تصفح المنيو
+            </a>
+            <a href="{{ url_for('signup') }}" class="btn-outline btn-lg" data-i18n="hero_cta_secondary">
+                أنشئ حسابك الآن
+            </a>
+        </div>
+        <div class="hero-highlights">
+            <div class="highlight">
+                <span class="highlight-icon">🏠</span>
+                <span class="highlight-text" data-i18n="hero_highlight_home">
+                    أكل بيتي 100%
+                </span>
+            </div>
+            <div class="highlight">
+                <span class="highlight-icon">⚡</span>
+                <span class="highlight-text" data-i18n="hero_highlight_fast">
+                    توصيل سريع وآمن
+                </span>
+            </div>
+            <div class="highlight">
+                <span class="highlight-icon">⭐</span>
+                <span class="highlight-text" data-i18n="hero_highlight_rating">
+                    تقييمات حقيقية من العملاء
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-visual glass-card">
+        <div class="dish-card main-dish">
+            <div class="dish-image-placeholder">🍲</div>
+            <div class="dish-info">
+                <h3 data-i18n="hero_sample_dish_title">فتة لحمة بلدي</h3>
+                <p class="dish-meta">
+                    <span data-i18n="hero_sample_dish_prep">تحضير: 45 دقيقة</span>
+                    •
+                    <span data-i18n="hero_sample_dish_for">تكفي 3 أفراد</span>
+                </p>
+                <p class="dish-price">250 EGP</p>
+            </div>
+        </div>
+        <div class="dish-card secondary-dish">
+            <div class="dish-image-placeholder small">🥗</div>
+            <div class="dish-info">
+                <h4 data-i18n="hero_sample_dish2_title">سلطة تبولة فريش</h4>
+                <p class="dish-price-sm">80 EGP</p>
+            </div>
+        </div>
+        <div class="floating-badge glass-card" data-i18n="hero_badge_text">
+            +500 طبق بيتى متاح الآن
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

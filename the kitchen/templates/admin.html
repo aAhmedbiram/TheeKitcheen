@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h2 data-i18n="admin_title">لوحة التحكم</h2>
+        <p data-i18n="admin_subtitle">إدارة الأطباق والطلبات بكل سهولة.</p>
+    </div>
+</section>
+
+<section class="admin-layout">
+    <aside class="admin-sidebar glass-card">
+        <button class="admin-tab active" data-tab="products" data-i18n="admin_tab_products">الأطباق</button>
+        <button class="admin-tab" data-tab="orders" data-i18n="admin_tab_orders">الطلبات</button>
+    </aside>
+
+    <div class="admin-content">
+        <div class="admin-panel glass-card" id="admin-products">
+            <div class="panel-header">
+                <h3 data-i18n="admin_products_title">إدارة الأطباق</h3>
+                <button class="btn-primary btn-sm" id="admin-save-product" data-mode="create" data-i18n="admin_add_product_btn">+ إضافة طبق جديد</button>
+            </div>
+            <div class="admin-form-grid">
+                <input type="hidden" id="prod_id">
+                <div class="form-field">
+                    <label data-i18n="admin_label_name_ar">اسم الطبق (عربي)</label>
+                    <input type="text" id="prod_name_ar">
+                </div>
+                <div class="form-field">
+                    <label data-i18n="admin_label_name_en">اسم الطبق (إنجليزي)</label>
+                    <input type="text" id="prod_name_en">
+                </div>
+                <div class="form-field">
+                    <label data-i18n="admin_label_price">السعر (EGP)</label>
+                    <input type="number" id="prod_price" min="0">
+                </div>
+                <div class="form-field">
+                    <label data-i18n="admin_label_prep">وقت التحضير (دقيقة)</label>
+                    <input type="number" id="prod_prep" min="0">
+                </div>
+                <div class="form-field">
+                    <label data-i18n="admin_label_desc_ar">الوصف (عربي)</label>
+                    <textarea id="prod_desc_ar" rows="2"></textarea>
+                </div>
+                <div class="form-field">
+                    <label data-i18n="admin_label_desc_en">الوصف (إنجليزي)</label>
+                    <textarea id="prod_desc_en" rows="2"></textarea>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px; align-items:center;">
+                <button class="btn-outline btn-sm" id="admin-cancel-edit" type="button" data-i18n="btn_cancel_edit">إلغاء التعديل</button>
+                <span class="field-hint" id="admin-status-text"></span>
+            </div>
+            <div class="panel-header secondary">
+                <h4 data-i18n="admin_existing_products">الأطباق الحالية</h4>
+            </div>
+            <div class="admin-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th data-i18n="admin_table_name">الطبق</th>
+                        <th data-i18n="admin_table_price">السعر</th>
+                        <th data-i18n="admin_table_status">الحالة</th>
+                        <th data-i18n="admin_table_actions">إجراءات</th>
+                    </tr>
+                    </thead>
+                    <tbody id="admin-products-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-panel glass-card hidden" id="admin-orders">
+            <div class="panel-header">
+                <h3 data-i18n="admin_orders_title">إدارة الطلبات</h3>
+            </div>
+            <div class="admin-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th data-i18n="admin_order_id">#</th>
+                        <th data-i18n="admin_order_customer">العميل</th>
+                        <th data-i18n="admin_order_total">الإجمالي</th>
+                        <th data-i18n="admin_order_status">الحالة</th>
+                        <th data-i18n="admin_order_actions">إجراءات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>#1024</td>
+                        <td>أحمد محمد</td>
+                        <td>470 EGP</td>
+                        <td><span class="badge" data-i18n="status_preparing">قيد التحضير</span></td>
+                        <td>
+                            <button class="btn-text" data-i18n="btn_view">عرض</button>
+                            <button class="btn-text" data-i18n="btn_mark_delivered">تم التسليم</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

@@ -1,26 +1,35 @@
-app = "thekitchen"
-primary_region = "ams"
+# fly.toml app configuration file generated for thekitchen on 2026-01-18T20:08:57+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'thekitchen'
+primary_region = 'ams'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
+
+[env]
+  FLASK_ENV = 'production'
+  FLY_APP_NAME = 'thekitchen'
 
 [http_service]
   internal_port = 5000
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
-[[http_service.checks]]
-  grace_period = "10s"
-  interval = "30s"
-  method = "GET"
-  path = "/"
-  protocol = "http"
-  timeout = "5s"
-  retries = 3
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/'
+    protocol = 'http'
 
-[env]
-  FLASK_ENV = "production"
-  FLY_APP_NAME = "thekitchen"
+[[vm]]
+  memory = '1gb'
+  cpus = 1
+  memory_mb = 1024

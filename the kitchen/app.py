@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from flask_cors import CORS
-from config_sqlite import Config  # Using SQLite for now
+from config import Config  # Back to original config
 from extensions import db
 
 

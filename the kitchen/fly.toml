@@ -29,7 +29,3 @@ primary_region = "ams"
     path = "/"
     protocol = "http"
     retries = 3
-
-[[mounts]]
-  source = "kitchen_data"
-  destination = "/data"

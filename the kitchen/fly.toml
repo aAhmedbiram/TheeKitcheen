@@ -28,6 +28,11 @@ primary_region = 'ams'
     method = 'GET'
     path = '/'
     protocol = 'http'
+    retries = 3
+
+[[mounts]]
+  source = "kitchen_data"
+  destination = "/data"
 
 [[vm]]
   memory = '1gb'

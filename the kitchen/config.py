@@ -9,10 +9,10 @@ class Config:
 
     # Check if we're in production (Fly.io)
     if os.environ.get("FLY_APP_NAME"):
-        # Production: Use SQLite on persistent volume
-        SQLALCHEMY_DATABASE_URI = "sqlite:////data/app.db"
+        # Production: Use Neon database
+        SQLALCHEMY_DATABASE_URI = "postgresql://neondb_owner:npg_6GExLcegj1ph@ep-holy-smoke-ahbl1aqc-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
     else:
-        # Development: Use SQLite locally
+        # Development: Use SQLite
         SQLALCHEMY_DATABASE_URI = "sqlite:///the_kitchen.db"
     
     SQLALCHEMY_TRACK_MODIFICATIONS = False

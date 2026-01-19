@@ -513,6 +513,7 @@ function setupAdminTabs() {
 async function apiFetch(path, options) {
     const res = await fetch(path, {
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         ...options
     });
     const data = await res.json().catch(() => ({}));

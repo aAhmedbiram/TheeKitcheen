@@ -6,7 +6,12 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or os.urandom(32)
-
+    
+    # Session configuration
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'None'
+    
     # Check if we're in production (Fly.io)
     if os.environ.get("FLY_APP_NAME"):
         # Production: Use Neon database

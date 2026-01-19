@@ -8,7 +8,12 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    CORS(app)
+    # Configure CORS to support credentials
+    CORS(app, 
+         supports_credentials=True,
+         origins=["https://thekitchen.fly.dev", "http://localhost:5000", "http://127.0.0.1:5000"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         allow_headers=["Content-Type", "Authorization"])
 
     db.init_app(app)
 

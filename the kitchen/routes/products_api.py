@@ -50,7 +50,6 @@ def create_product():
         description_ar=str(data["description_ar"]).strip(),
         description_en=str(data["description_en"]).strip(),
         price=price,
-        prep_time_minutes=int(data.get("prep_time_minutes") or 30),
         is_available=bool(data.get("is_available", True)),
         image_url=(str(data["image_url"]).strip() if data.get("image_url") else None),
     )
@@ -82,11 +81,6 @@ def update_product(product_id: int):
             product.price = float(data["price"])
         except (TypeError, ValueError):
             return _bad_request("Invalid price")
-    if "prep_time_minutes" in data:
-        try:
-            product.prep_time_minutes = int(data["prep_time_minutes"])
-        except (TypeError, ValueError):
-            return _bad_request("Invalid prep_time_minutes")
     if "is_available" in data:
         product.is_available = bool(data["is_available"])
     if "image_url" in data:

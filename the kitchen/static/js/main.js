@@ -620,7 +620,6 @@ function fillAdminFormForEdit(p) {
     document.getElementById("prod_name_ar").value = p.name_ar || "";
     document.getElementById("prod_name_en").value = p.name_en || "";
     document.getElementById("prod_price").value = p.price;
-    document.getElementById("prod_prep").value = p.prep_time_minutes || 30;
     document.getElementById("prod_desc_ar").value = p.description_ar || "";
     document.getElementById("prod_desc_en").value = p.description_en || "";
     setAdminSaveMode("update");
@@ -639,7 +638,6 @@ function setupAdminProductsCrud() {
             name_ar: document.getElementById("prod_name_ar").value,
             name_en: document.getElementById("prod_name_en").value,
             price: document.getElementById("prod_price").value,
-            prep_time_minutes: document.getElementById("prod_prep").value,
             description_ar: document.getElementById("prod_desc_ar").value,
             description_en: document.getElementById("prod_desc_en").value,
             is_available: true

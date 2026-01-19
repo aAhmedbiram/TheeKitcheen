@@ -22,7 +22,6 @@ class Product(db.Model):
     description_ar = db.Column(db.Text, nullable=False)
     description_en = db.Column(db.Text, nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
-    prep_time_minutes = db.Column(db.Integer, default=30)
     is_available = db.Column(db.Boolean, default=True)
     image_url = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -35,7 +34,6 @@ class Product(db.Model):
             "description_ar": self.description_ar,
             "description_en": self.description_en,
             "price": float(self.price),
-            "prep_time_minutes": self.prep_time_minutes,
             "is_available": self.is_available,
             "image_url": self.image_url,
         }

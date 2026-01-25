@@ -407,33 +407,7 @@ const observer = new IntersectionObserver((entries) => {
         });
       }
       
-      // Ultra-smooth 3D Card flip animations for projects
-      if (element.classList.contains('project-card')) {
-        anime({
-          targets: element,
-          rotateY: [90, 0],
-          rotateX: [15, 0],
-          translateY: [80, 0],
-          scale: [0.8, 1.02, 1],
-          opacity: [0, 1],
-          duration: 900,
-          delay: anime.stagger(150),
-          easing: 'easeOutCubic',
-          begin: () => {
-            const rect = element.getBoundingClientRect();
-            particleSystem.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 12);
-            // Add subtle floating animation
-            anime({
-              targets: element,
-              translateY: [0, -3, 0],
-              duration: 3000,
-              delay: 1000,
-              loop: true,
-              easing: 'easeInOutSine'
-            });
-          }
-        });
-      }
+      // Skip project card animations - removed as requested
       
       // Ultra-smooth education items
       if (element.classList.contains('education-item')) {
@@ -491,7 +465,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Select elements to observe for scroll animations
-const elementsToAnimate = document.querySelectorAll('.section, .section h2, .section p, .skill-category, .project-card, .education-item, .contact-item, .services li');
+const elementsToAnimate = document.querySelectorAll('.section, .section h2, .section p, .skill-category, .education-item, .contact-item, .services li');
 
 // Don't hide elements initially - let animations handle visibility
 elementsToAnimate.forEach(el => {
@@ -549,34 +523,7 @@ document.querySelectorAll('.btn').forEach(btn => {
   });
 });
 
-// Ultra-smooth 3D Project card hover animations
-document.querySelectorAll('.project-card').forEach(card => {
-  card.addEventListener('mouseenter', () => {
-    anime({
-      targets: card,
-      translateY: -15,
-      scale: 1.06,
-      rotateX: 8,
-      rotateY: 8,
-      boxShadow: '0 25px 50px rgba(0, 240, 255, 0.4)',
-      duration: 400,
-      easing: 'easeOutCubic'
-    });
-  });
-  
-  card.addEventListener('mouseleave', () => {
-    anime({
-      targets: card,
-      translateY: 0,
-      scale: 1,
-      rotateX: 0,
-      rotateY: 0,
-      boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.1)',
-      duration: 500,
-      easing: 'easeOutCubic'
-    });
-  });
-});
+// Project card hover animations - removed as requested
 
 // Ultra-smooth skill item hover animations
 document.querySelectorAll('.skills-grid span').forEach(skill => {
@@ -744,7 +691,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anime({
         targets: 'html, body',
         scrollTop: targetPosition,
-        duration: 1500,
+        duration: 600,
         easing: 'easeInOutCubic'
       });
     }

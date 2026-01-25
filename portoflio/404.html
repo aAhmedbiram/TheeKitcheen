@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Page Not Found | Ahmed Biram Portfolio</title>
+    <meta name="description" content="404 - Page not found. Return to Ahmed Biram's Full Stack Developer portfolio.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="new_logo.jpeg">
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background: #060606;
+            color: #fff;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 700;
+            color: #00f0ff;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .error-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .error-description {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .error-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .error-link {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #00f0ff, #a200ff);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .error-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 240, 255, 0.3);
+        }
+
+        .error-link.secondary {
+            background: transparent;
+            border: 2px solid #00f0ff;
+        }
+
+        .error-link.secondary:hover {
+            background: #00f0ff;
+            color: #060606;
+        }
+
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 5rem;
+            }
+
+            .error-title {
+                font-size: 2rem;
+            }
+
+            .error-description {
+                font-size: 1rem;
+            }
+
+            .error-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .error-link {
+                width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob"></div>
+        <div class="blob"></div>
+        <div class="blob"></div>
+    </div>
+
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">Page Not Found</h1>
+        <p class="error-description">
+            Oops! The page you're looking for doesn't exist or has been moved.
+            But don't worry, Ahmed Biram's Full Stack Developer portfolio is just a click away!
+        </p>
+        <div class="error-links">
+            <a href="/" class="error-link">Go Home</a>
+            <a href="/#contact" class="error-link secondary">Contact Ahmed</a>
+            <a href="/#projects" class="error-link secondary">View Projects</a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        // Animate the 404 code
+        anime({
+            targets: '.error-code',
+            translateY: [-50, 0],
+            opacity: [0, 1],
+            duration: 1000,
+            easing: 'easeOutElastic(1, .5)'
+        });
+
+        // Animate the title
+        anime({
+            targets: '.error-title',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            duration: 800,
+            delay: 300,
+            easing: 'easeOutQuad'
+        });
+
+        // Animate the description
+        anime({
+            targets: '.error-description',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            duration: 800,
+            delay: 500,
+            easing: 'easeOutQuad'
+        });
+
+        // Animate the links
+        anime({
+            targets: '.error-link',
+            translateY: [30, 0],
+            opacity: [0, 1],
+            duration: 600,
+            delay: anime.stagger(100, { start: 700 }),
+            easing: 'easeOutBack'
+        });
+
+        // Animate background blobs
+        anime({
+            targets: '.blob',
+            borderRadius: function () {
+                return anime.random(20, 80) + '%';
+            },
+            scale: function () {
+                return anime.random(0.7, 1.4);
+            },
+            rotate: function () {
+                return anime.random(-360, 360);
+            },
+            duration: function () {
+                return anime.random(6000, 10000);
+            },
+            delay: anime.stagger(150),
+            loop: true,
+            direction: 'alternate',
+            easing: 'easeInOutSine'
+        });
+    </script>
+</body>
+
+</html>

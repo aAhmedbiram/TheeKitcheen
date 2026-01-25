@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Allow search engines to crawl all important pages
+Allow: /css/
+Allow: /js/
+Allow: /images/
+
+# Block access to sensitive files
+Disallow: /Ahmed_Hani_Wafik_Biram_CV.docx
+Disallow: /*.docx
+Disallow: /*.pdf
+Disallow: /*.txt
+
+# Sitemap location
+Sitemap: https://abiram-portoflio.fly.dev/sitemap.xml
+
+# Crawl delay (optional, be nice to servers)
+Crawl-delay: 1

@@ -1,0 +1,69 @@
+name: Ahmed Biram Portfolio
+description: Professional portfolio of Ahmed Biram - Full Stack Developer specializing in Flask, Spring Boot, and modern web technologies
+url: https://abiram-portoflio.fly.dev/
+baseurl: ""
+lang: en
+author: Ahmed Biram
+
+# Portfolio Information
+title: Ahmed Biram | Full Stack Developer
+profession: Full Stack Developer
+specialization: Flask, Spring Boot, Python, Java
+location: Cairo, Egypt
+email: ahmedbiram47@gmail.com
+phone: "+20 1200073390"
+
+# Social Links
+linkedin: https://www.linkedin.com/in/ahmed-biram-2752022b4/
+github: https://github.com/aAhmedbiram
+
+# SEO
+keywords: "Ahmed Biram, Full Stack Developer, Flask Developer, Spring Boot Developer, Python Developer, Java Developer, Web Developer, Egypt, Cairo, SAAS, REST API, PostgreSQL, MongoDB"
+description: "Ahmed Biram - Full Stack Developer specializing in Flask, Spring Boot, and scalable web applications. Expert in Python, Java, JavaScript, PostgreSQL, MongoDB. Building SAAS platforms, REST APIs, and management systems in Cairo, Egypt."
+
+# Technologies
+backend:
+  - Python
+  - Java
+  - Flask
+  - Spring Boot
+  - REST APIs
+  - PostgreSQL
+  - MySQL
+  - MongoDB
+
+frontend:
+  - JavaScript
+  - HTML5
+  - CSS3
+  - Responsive Design
+  - Modern UI/UX
+
+tools:
+  - Git
+  - GitHub
+  - VS Code
+  - IntelliJ
+  - Excel
+
+# Services
+services:
+  - SAAS Platforms & Dashboards
+  - Business Websites & Admin Panels
+  - REST APIs & Backend Systems
+  - Gym, Cloud Kitchen & Management Systems
+  - Database Design & Optimization
+
+# Projects
+projects:
+  - name: Rival GYM SAAS
+    description: Multi-tenant gym management system with subscriptions, payments, attendance and reports
+    technologies: Flask, PostgreSQL, JWT, Pandas
+    
+  - name: Cloud Kitchen Platform
+    description: Online ordering system with full admin dashboard and dynamic menu management
+    technologies: Flask, JavaScript, PostgreSQL
+    
+  - name: Future Focus Academy
+    description: Learning management system built with Spring Boot and MongoDB
+    technologies: Java, Spring Boot, MongoDB

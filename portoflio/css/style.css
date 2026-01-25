@@ -13,6 +13,150 @@ body {
   position: relative;
 }
 
+/* Responsive Design - Mobile First Approach */
+
+/* Small devices (phones, 576px and down) */
+@media (max-width: 576px) {
+  .hero-content {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .hero-content h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+  
+  .hero-content h3 {
+    font-size: 1.2rem;
+  }
+  
+  .hero-content p {
+    font-size: 0.9rem;
+    margin: 15px 0;
+  }
+  
+  .profile-img {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+  }
+  
+  .buttons {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .buttons .btn {
+    width: 200px;
+    text-align: center;
+  }
+  
+  .contact-info {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+  
+  .skills-categories {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .blob {
+    width: 300px !important;
+    height: 300px !important;
+  }
+  
+  .blob:nth-child(2) {
+    width: 350px !important;
+    height: 350px !important;
+  }
+  
+  .blob:nth-child(3) {
+    width: 250px !important;
+    height: 250px !important;
+  }
+}
+
+/* Medium devices (tablets, 577px to 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+  .hero-content {
+    padding: 30px;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content h3 {
+    font-size: 1.4rem;
+  }
+  
+  .buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .skills-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .blob {
+    width: 400px !important;
+    height: 400px !important;
+  }
+}
+
+/* Large devices (desktops, 769px to 992px) */
+@media (min-width: 769px) and (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 3rem;
+  }
+  
+  .skills-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Extra large devices (large desktops, 993px and up) */
+@media (min-width: 993px) {
+  .hero-content h1 {
+    font-size: 3.5rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
+  }
+  
+  .project-card:hover {
+    transform: none;
+  }
+}
+
 /* Background Animated Blobs */
 .background-blobs {
   position: fixed;
@@ -84,6 +228,19 @@ nav {
   align-items: center;
 }
 
+.nav-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.logo-centered {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 @keyframes swim {
   0% { transform: translate(0, 0) rotate(0deg); }
   33% { transform: translate(5px, -10px) rotate(2deg); }
@@ -92,7 +249,7 @@ nav {
 }
 
 .logo-img {
-  height: 120px; /* Even bigger logo */
+  height: 180px; /* Smaller logo */
   width: auto;
   animation: swim 6s ease-in-out infinite;
   filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.3));
@@ -268,6 +425,46 @@ nav a:hover {
 
 .education-item h3 {
   color: #00f0ff;
+}
+
+/* Courses List Styling */
+.courses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.course-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.course-item:hover {
+  border-color: #00f0ff;
+  background: rgba(0, 240, 255, 0.05);
+  transform: translateY(-3px);
+}
+
+.course-item strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.platform {
+  background: rgba(0, 240, 255, 0.1);
+  color: #00f0ff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(0, 240, 255, 0.3);
 }
 
 /* Contact Section */

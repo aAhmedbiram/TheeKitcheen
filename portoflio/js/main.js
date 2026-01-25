@@ -205,107 +205,121 @@ class ParticleSystem {
 
 const particleSystem = new ParticleSystem();
 
-// Enhanced entrance animations with anime.js
+// Enhanced entrance animations with anime.js - Ultra Smooth
 window.addEventListener('load', () => {
-  // Morphing background blobs
+  // Ultra-smooth morphing background blobs
   anime({
     targets: '.blob',
     borderRadius: function() {
-      return anime.random(25, 75) + '%';
+      return anime.random(20, 80) + '%';
     },
     scale: function() {
-      return anime.random(0.8, 1.3);
+      return anime.random(0.7, 1.4);
     },
     rotate: function() {
-      return anime.random(-180, 180);
+      return anime.random(-360, 360);
+    },
+    translateX: function() {
+      return anime.random(-50, 50);
+    },
+    translateY: function() {
+      return anime.random(-50, 50);
     },
     duration: function() {
-      return anime.random(8000, 12000);
+      return anime.random(6000, 10000);
     },
-    delay: anime.stagger(200),
+    delay: anime.stagger(150),
     loop: true,
     direction: 'alternate',
-    easing: 'easeInOutQuad'
+    easing: 'easeInOutSine'
   });
   
-  // Dramatic hero entrance animation
+  // Ultra-smooth hero entrance with more animations
   anime.timeline({
-    easing: 'easeOutExpo',
+    easing: 'easeOutCirc',
   })
   .add({
     targets: '.logo-img',
-    scale: [0, 1.2, 1],
+    scale: [0, 1.3, 1],
     opacity: [0, 1],
-    rotate: [720, 0],
-    duration: 2000,
-    delay: 300
+    rotate: [540, 360, 0],
+    filter: ['blur(20px)', 'blur(0px)'],
+    duration: 1200,
+    delay: 200
   })
   .add({
     targets: 'nav ul li',
-    translateY: [100, 0],
-    opacity: [0, 1],
-    rotate: [15, 0],
-    duration: 800,
-    delay: anime.stagger(80, {start: 800})
-  }, '-=1000')
-  .add({
-    targets: '.profile-img',
-    scale: [0, 1.3, 1],
-    opacity: [0, 1],
-    borderRadius: ['50%', '30%', '50%'],
-    duration: 1500,
-    easing: 'easeOutElastic(1, .5)'
-  }, '-=600')
-  .add({
-    targets: '.hero-content h1',
     translateY: [80, 0],
     opacity: [0, 1],
+    rotate: [20, 0],
     scale: [0.8, 1],
-    duration: 1200,
-    easing: 'easeOutBack(1.7)'
-  }, '-=800')
+    duration: 600,
+    delay: anime.stagger(60, {start: 400})
+  }, '-=600')
   .add({
-    targets: '.hero-content h3',
+    targets: '.profile-img',
+    scale: [0, 1.4, 1],
+    opacity: [0, 1],
+    borderRadius: ['50%', '20%', '50%'],
+    rotate: [180, 0],
+    filter: ['hue-rotate(90deg)', 'hue-rotate(0deg)'],
+    duration: 1000,
+    easing: 'easeOutElastic(1, .6)'
+  }, '-=400')
+  .add({
+    targets: '.hero-content h1',
     translateY: [60, 0],
     opacity: [0, 1],
-    duration: 1000,
+    scale: [0.7, 1.1, 1],
+    rotateZ: [5, 0],
+    duration: 900,
+    easing: 'easeOutBack(1.8)'
+  }, '-=500')
+  .add({
+    targets: '.hero-content h3',
+    translateY: [40, 0],
+    opacity: [0, 1],
+    scale: [0.8, 1],
+    duration: 700,
     complete: () => {
-      // Start scramble animation for subtitle
       const fx = new TextScramble(document.querySelector('.hero-content h3'));
       fx.setText('Full Stack Developer');
     }
-  }, '-=400')
+  }, '-=300')
   .add({
     targets: '.hero-content p',
-    translateY: [40, 0],
+    translateY: [30, 0],
     opacity: [0, 1],
-    duration: 800
+    translateX: [-20, 0],
+    duration: 600
   }, '-=200')
   .add({
     targets: '.contact-info p',
-    translateX: [-80, 0],
+    translateX: [-60, 0],
     opacity: [0, 1],
-    duration: 600,
-    delay: anime.stagger(100)
+    rotate: [-5, 0],
+    duration: 500,
+    delay: anime.stagger(60)
   })
   .add({
     targets: '.buttons .btn',
-    translateY: [60, 0],
+    translateY: [40, 0],
     opacity: [0, 1],
-    scale: [0.5, 1],
-    duration: 800,
-    delay: anime.stagger(150),
-    easing: 'easeOutBack(1.7)',
+    scale: [0.6, 1.1, 1],
+    rotate: [-3, 0],
+    duration: 600,
+    delay: anime.stagger(100),
+    easing: 'easeOutBack(1.9)',
     begin: () => {
-      particleSystem.burst(window.innerWidth / 2, window.innerHeight / 2, 30);
+      particleSystem.burst(window.innerWidth / 2, window.innerHeight / 2, 25);
     }
-  }, '-=200');
+  }, '-=150');
 });
 
-// Enhanced Scroll Animations with Anime.js
+// Ultra-smooth Scroll Animations with Anime.js
 const observerOptions = {
-  threshold: 0.1,
-  rootMargin: "0px"
+  threshold: 0.15,
+  rootMargin: "-50px 0px"
 };
 
 const observer = new IntersectionObserver((entries) => {
@@ -313,110 +327,161 @@ const observer = new IntersectionObserver((entries) => {
     if (entry.isIntersecting) {
       const element = entry.target;
       
-      // Animate section headers with scramble effect
+      // Ultra-smooth section headers with advanced effects
       if (element.classList.contains('section') && element.querySelector('h2')) {
         const h2 = element.querySelector('h2');
         anime({
           targets: h2,
-          translateY: [60, 0],
+          translateY: [50, 0],
           opacity: [0, 1],
-          duration: 1000,
-          easing: 'easeOutQuad',
+          scale: [0.8, 1.05, 1],
+          rotateX: [15, 0],
+          duration: 800,
+          easing: 'easeOutCubic',
           complete: () => {
             const fx = new TextScramble(h2);
             fx.setText(h2.innerText);
+            // Add glow effect after text scramble
+            anime({
+              targets: h2,
+              textShadow: ['0 0 0px rgba(0, 240, 255, 0)', '0 0 20px rgba(0, 240, 255, 0.5)', '0 0 0px rgba(0, 240, 255, 0)'],
+              duration: 1000,
+              delay: 500
+            });
           }
         });
       }
       
-      // Animate paragraphs
+      // Ultra-smooth paragraphs with wave effect
       if (element.tagName === 'P' && element.parentElement.classList.contains('section')) {
         anime({
           targets: element,
           translateY: [40, 0],
           opacity: [0, 1],
-          duration: 800,
-          delay: 200,
-          easing: 'easeOutQuad'
+          translateX: [-10, 0],
+          duration: 700,
+          delay: 150,
+          easing: 'easeOutCubic'
         });
       }
       
-      // Animate skill categories with 3D effect
+      // Ultra-smooth skill categories with 3D perspective
       if (element.classList.contains('skill-category')) {
         anime({
           targets: element,
-          translateY: [80, 0],
-          rotateX: [45, 0],
+          translateY: [60, 0],
+          rotateX: [30, 0],
+          rotateY: [-10, 0],
+          scale: [0.85, 1],
           opacity: [0, 1],
-          duration: 1000,
-          delay: anime.stagger(300),
-          easing: 'easeOutQuad'
+          duration: 800,
+          delay: anime.stagger(200),
+          easing: 'easeOutCubic',
+          begin: () => {
+            // Add floating animation to category title
+            const title = element.querySelector('h3');
+            if (title) {
+              anime({
+                targets: title,
+                translateY: [0, -5, 0],
+                duration: 2000,
+                delay: 800,
+                loop: true,
+                easing: 'easeInOutSine'
+              });
+            }
+          }
         });
         
-        // Animate skill items with bounce effect
+        // Ultra-smooth skill items with elastic bounce
         const skillItems = element.querySelectorAll('.skills-grid span');
         anime({
           targets: skillItems,
-          scale: [0, 1.2, 1],
-          rotate: [180, 0],
+          scale: [0, 1.3, 1],
+          rotate: [180, -10, 0],
           opacity: [0, 1],
-          duration: 600,
-          delay: anime.stagger(50, {start: 500}),
-          easing: 'easeOutBack(1.7)'
+          translateY: [20, 0],
+          duration: 500,
+          delay: anime.stagger(40, {start: 300}),
+          easing: 'easeOutElastic(1, .8)'
         });
       }
       
-      // 3D Card flip animations for projects
+      // Ultra-smooth 3D Card flip animations for projects
       if (element.classList.contains('project-card')) {
         anime({
           targets: element,
           rotateY: [90, 0],
-          translateY: [100, 0],
+          rotateX: [15, 0],
+          translateY: [80, 0],
+          scale: [0.8, 1.02, 1],
           opacity: [0, 1],
-          duration: 1000,
-          delay: anime.stagger(200),
-          easing: 'easeOutQuad',
+          duration: 900,
+          delay: anime.stagger(150),
+          easing: 'easeOutCubic',
           begin: () => {
             const rect = element.getBoundingClientRect();
-            particleSystem.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 15);
+            particleSystem.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 12);
+            // Add subtle floating animation
+            anime({
+              targets: element,
+              translateY: [0, -3, 0],
+              duration: 3000,
+              delay: 1000,
+              loop: true,
+              easing: 'easeInOutSine'
+            });
           }
         });
       }
       
-      // Animate education items
+      // Ultra-smooth education items
       if (element.classList.contains('education-item')) {
         anime({
           targets: element,
-          translateX: [-100, 0],
-          rotateZ: [10, 0],
+          translateX: [-80, 0],
+          rotateZ: [8, 0],
+          scale: [0.9, 1],
           opacity: [0, 1],
-          duration: 1000,
-          easing: 'easeOutQuad'
+          duration: 800,
+          easing: 'easeOutCubic'
         });
       }
       
-      // Animate contact items
+      // Ultra-smooth contact items with pulse effect
       if (element.classList.contains('contact-item')) {
         anime({
           targets: element,
-          translateY: [50, 0],
-          scale: [0.8, 1],
-          opacity: [0, 1],
-          duration: 800,
-          delay: anime.stagger(150),
-          easing: 'easeOutBack(1.7)'
-        });
-      }
-      
-      // Animate service list items
-      if (element.parentElement.classList.contains('services')) {
-        anime({
-          targets: element,
-          translateX: [-60, 0],
+          translateY: [40, 0],
+          scale: [0.85, 1],
           opacity: [0, 1],
           duration: 600,
           delay: anime.stagger(100),
-          easing: 'easeOutQuad'
+          easing: 'easeOutBack(2)',
+          complete: () => {
+            // Add subtle pulse animation
+            anime({
+              targets: element,
+              scale: [1, 1.02, 1],
+              duration: 2000,
+              delay: anime.random(0, 1000),
+              loop: true,
+              easing: 'easeInOutSine'
+            });
+          }
+        });
+      }
+      
+      // Ultra-smooth service list items with slide effect
+      if (element.parentElement.classList.contains('services')) {
+        anime({
+          targets: element,
+          translateX: [-50, 0],
+          translateY: [10, 0],
+          opacity: [0, 1],
+          duration: 500,
+          delay: anime.stagger(80),
+          easing: 'easeOutCubic'
         });
       }
       
@@ -428,26 +493,47 @@ const observer = new IntersectionObserver((entries) => {
 // Select elements to observe for scroll animations
 const elementsToAnimate = document.querySelectorAll('.section, .section h2, .section p, .skill-category, .project-card, .education-item, .contact-item, .services li');
 
+// Don't hide elements initially - let animations handle visibility
 elementsToAnimate.forEach(el => {
-  el.style.opacity = '0';
+  // Only hide if not already visible from initial load
+  if (!el.classList.contains('hero-content')) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+  }
   observer.observe(el);
 });
 
+// Fallback: Make content visible after 1.5 seconds if animations haven't triggered
+setTimeout(() => {
+  elementsToAnimate.forEach(el => {
+    if (el.style.opacity === '0') {
+      anime({
+        targets: el,
+        opacity: 1,
+        translateY: 0,
+        duration: 400, // Reduced from 800
+        easing: 'easeOutQuad'
+      });
+    }
+  });
+}, 1500); // Reduced from 3000
+
 // Interactive Hover Animations
-// Enhanced button hover effects
+// Enhanced button hover effects - Ultra Smooth
 document.querySelectorAll('.btn').forEach(btn => {
   btn.addEventListener('mouseenter', () => {
     anime({
       targets: btn,
-      scale: 1.15,
-      translateY: -8,
+      scale: 1.12,
+      translateY: -6,
       rotate: 2,
+      boxShadow: '0 10px 30px rgba(0, 240, 255, 0.4)',
       duration: 300,
-      easing: 'easeOutQuad'
+      easing: 'easeOutCubic'
     });
     
     const rect = btn.getBoundingClientRect();
-    particleSystem.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 10);
+    particleSystem.burst(rect.left + rect.width / 2, rect.top + rect.height / 2, 8);
   });
   
   btn.addEventListener('mouseleave', () => {
@@ -456,24 +542,25 @@ document.querySelectorAll('.btn').forEach(btn => {
       scale: 1,
       translateY: 0,
       rotate: 0,
-      duration: 300,
-      easing: 'easeOutQuad'
+      boxShadow: '0 0 0',
+      duration: 400,
+      easing: 'easeOutCubic'
     });
   });
 });
 
-// 3D Project card hover animations
+// Ultra-smooth 3D Project card hover animations
 document.querySelectorAll('.project-card').forEach(card => {
   card.addEventListener('mouseenter', () => {
     anime({
       targets: card,
-      translateY: -20,
-      scale: 1.08,
-      rotateX: 5,
-      rotateY: 5,
-      boxShadow: '0 30px 60px rgba(0, 240, 255, 0.4)',
+      translateY: -15,
+      scale: 1.06,
+      rotateX: 8,
+      rotateY: 8,
+      boxShadow: '0 25px 50px rgba(0, 240, 255, 0.4)',
       duration: 400,
-      easing: 'easeOutQuad'
+      easing: 'easeOutCubic'
     });
   });
   
@@ -485,23 +572,24 @@ document.querySelectorAll('.project-card').forEach(card => {
       rotateX: 0,
       rotateY: 0,
       boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 240, 255, 0.1)',
-      duration: 400,
-      easing: 'easeOutQuad'
+      duration: 500,
+      easing: 'easeOutCubic'
     });
   });
 });
 
-// Skill item hover animations
+// Ultra-smooth skill item hover animations
 document.querySelectorAll('.skills-grid span').forEach(skill => {
   skill.addEventListener('mouseenter', () => {
     anime({
       targets: skill,
-      scale: 1.3,
-      rotate: 10,
-      backgroundColor: 'rgba(0, 240, 255, 0.3)',
+      scale: 1.2,
+      rotate: 8,
+      backgroundColor: 'rgba(0, 240, 255, 0.4)',
       borderColor: '#00f0ff',
+      boxShadow: '0 5px 15px rgba(0, 240, 255, 0.3)',
       duration: 300,
-      easing: 'easeOutBack(1.7)'
+      easing: 'easeOutBack(2)'
     });
     
     const rect = skill.getBoundingClientRect();
@@ -515,22 +603,24 @@ document.querySelectorAll('.skills-grid span').forEach(skill => {
       rotate: 0,
       backgroundColor: 'rgba(255, 255, 255, 0.03)',
       borderColor: 'rgba(255, 255, 255, 0.1)',
-      duration: 300,
-      easing: 'easeOutQuad'
+      boxShadow: '0 0 0',
+      duration: 400,
+      easing: 'easeOutCubic'
     });
   });
 });
 
-// Navigation link hover effects
+// Ultra-smooth navigation link hover effects
 document.querySelectorAll('nav a').forEach(link => {
   link.addEventListener('mouseenter', () => {
     anime({
       targets: link,
-      translateY: -5,
-      scale: 1.1,
+      translateY: -4,
+      scale: 1.08,
       color: '#00f0ff',
-      duration: 200,
-      easing: 'easeOutQuad'
+      textShadow: '0 0 10px rgba(0, 240, 255, 0.5)',
+      duration: 250,
+      easing: 'easeOutCubic'
     });
   });
   
@@ -540,36 +630,38 @@ document.querySelectorAll('nav a').forEach(link => {
       translateY: 0,
       scale: 1,
       color: '#fff',
-      duration: 200,
-      easing: 'easeOutQuad'
+      textShadow: '0 0 0',
+      duration: 300,
+      easing: 'easeOutCubic'
     });
   });
 });
 
-// Logo hover animation
+// Ultra-smooth logo hover animation
 document.querySelector('.logo-img').addEventListener('mouseenter', () => {
   anime({
     targets: '.logo-img',
     rotate: 360,
-    scale: 1.3,
-    filter: 'drop-shadow(0 0 40px rgba(0, 240, 255, 1))',
-    duration: 1000,
-    easing: 'easeInOutQuad'
+    scale: 1.25,
+    filter: ['drop-shadow(0 0 30px rgba(0, 240, 255, 1))', 'hue-rotate(180deg)', 'drop-shadow(0 0 30px rgba(0, 240, 255, 1))'],
+    duration: 800,
+    easing: 'easeInOutCubic'
   });
   
-  particleSystem.burst(window.innerWidth / 2, 100, 25);
+  particleSystem.burst(window.innerWidth / 2, 100, 20);
 });
 
-// Contact item hover animations
+// Ultra-smooth contact item hover animations
 document.querySelectorAll('.contact-item').forEach(item => {
   item.addEventListener('mouseenter', () => {
     anime({
       targets: item,
-      translateX: 15,
-      backgroundColor: 'rgba(0, 240, 255, 0.15)',
+      translateX: 12,
+      backgroundColor: 'rgba(0, 240, 255, 0.2)',
       borderColor: '#00f0ff',
+      boxShadow: '0 5px 20px rgba(0, 240, 255, 0.3)',
       duration: 300,
-      easing: 'easeOutQuad'
+      easing: 'easeOutCubic'
     });
   });
   
@@ -579,8 +671,9 @@ document.querySelectorAll('.contact-item').forEach(item => {
       translateX: 0,
       backgroundColor: '#111',
       borderColor: '#1f1f1f',
-      duration: 300,
-      easing: 'easeOutQuad'
+      boxShadow: '0 0 0',
+      duration: 400,
+      easing: 'easeOutCubic'
     });
   });
 });
@@ -635,12 +728,12 @@ document.querySelectorAll('.email-link').forEach(link => {
       });
       
       // Create particle burst
-      particleSystem.burst(window.innerWidth - 100, 60, 20);
+      particleSystem.burst(window.innerWidth - 100, 60, 10); // Reduced from 20
     });
   });
 });
 
-// Smooth scroll with animation
+// Enhanced smooth scroll with animation
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
@@ -651,16 +744,37 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anime({
         targets: 'html, body',
         scrollTop: targetPosition,
-        duration: 1200,
-        easing: 'easeInOutQuad'
+        duration: 1500,
+        easing: 'easeInOutCubic'
       });
     }
   });
 });
 
-// Add some ambient particles periodically
+// Add more ambient particles with varied effects
 setInterval(() => {
   const x = Math.random() * window.innerWidth;
   const y = Math.random() * window.innerHeight;
   particleSystem.createParticle(x, y);
-}, 500);
+}, 800);
+
+// Add floating animation to hero section
+setInterval(() => {
+  anime({
+    targets: '.hero-content',
+    translateY: [0, -2, 0],
+    duration: 4000,
+    easing: 'easeInOutSine'
+  });
+}, 4000);
+
+// Add subtle pulse to buttons
+setInterval(() => {
+  anime({
+    targets: '.btn',
+    scale: [1, 1.02, 1],
+    duration: 2000,
+    delay: anime.stagger(200),
+    easing: 'easeInOutSine'
+  });
+}, 5000);

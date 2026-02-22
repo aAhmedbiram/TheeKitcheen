@@ -1,0 +1,671 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-title">{{ t.checkout if t.checkout is defined else 'Checkout' }}</h1>
+
+    <div class="checkout-content">
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h2>{{ t.order_summary if t.order_summary is defined else 'Order Summary' }}</h2>
+            <div class="cart-items-checkout">
+                {% for item in cart %}
+                <div class="checkout-item">
+                    <div class="item-info">
+                        <h4>{{ item.name }}</h4>
+                        <p>{{ item.price }} {{ t.egp if t.egp is defined else 'EGP' }} x {{ item.quantity }}</p>
+                    </div>
+                    <div class="item-total">
+                        <span>{{ (item.price * item.quantity) }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-totals">
+                <div class="summary-row">
+                    <span>{{ t.subtotal if t.subtotal is defined else 'Subtotal' }}:</span>
+                    <span id="subtotal">{{ subtotal }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+
+                {% if discount_applied %}
+                <div class="summary-row discount">
+                    <span>{{ t.discount if t.discount is defined else 'Discount (10%)' }}:</span>
+                    <span id="discount">-{{ discount_amount }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+                {% endif %}
+
+                <div class="summary-row total">
+                    <span>{{ t.total if t.total is defined else 'Total' }}:</span>
+                    <span id="final-total">{{ final_total }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="customer-info">
+            <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
+            <form id="checkoutForm" class="checkout-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">{{ t.full_name if t.full_name is defined else 'Full Name' }}</label>
+                        <input type="text" id="name" name="name" required {% if user_info and user_info.name
+                            %}value="{{ user_info.name }}" {% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{{ t.phone if t.phone is defined else 'Phone' }}</label>
+                        <input type="tel" id="phone" name="phone" required {% if user_info and user_info.phone
+                            %}value="{{ user_info.phone }}" {% endif %}>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address">{{ t.delivery_address if t.delivery_address is defined else 'Delivery
+                            Address' }}</label>
+                        <textarea id="address" name="address" rows="3" required {% if user_info and user_info.address
+                            %}>{{ user_info.address }}{% endif %}></textarea>
+                    </div>
+                </div>
+
+                <!-- Hidden fields for coordinates -->
+                <input type="hidden" id="lat" name="lat" value="">
+                <input type="hidden" id="lng" name="lng" value="">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="notes">{{ t.order_notes if t.order_notes is defined else 'Order Notes (Optional)'
+                            }}</label>
+                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="payment-section">
+            <h2>{{ t.payment_method if t.payment_method is defined else 'Payment Method' }}</h2>
+
+            <!-- Discount Option -->
+            <div class="discount-option">
+                <label class="discount-label">
+                    <input type="checkbox" id="applyDiscount" onchange="toggleDiscount()">
+                    {{ t.apply_10_discount if t.apply_10_discount is defined else 'Apply 10% Discount' }}
+                </label>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <div class="payment-option">
+                    <input type="radio" id="cash" name="payment_method" value="cash" checked>
+                    <label for="cash" class="payment-label">
+                        <span class="payment-icon">💵</span>
+                        <span class="payment-text">{{ t.cash_on_delivery if t.cash_on_delivery is defined else 'Cash on
+                            Delivery' }}</span>
+                    </label>
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" id="card" name="payment_method" value="card">
+                    <label for="card" class="payment-label">
+                        <span class="payment-icon">💳</span>
+                        <span class="payment-text">{{ t.credit_card if t.credit_card is defined else 'Credit Card'
+                            }}</span>
+                    </label>
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" id="wallet" name="payment_method" value="wallet">
+                    <label for="wallet" class="payment-label">
+                        <span class="payment-icon">📱</span>
+                        <span class="payment-text">{{ t.digital_wallet if t.digital_wallet is defined else 'Digital
+                            Wallet' }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Place Order Button -->
+        <div class="place-order-section">
+            <button type="button" class="place-order-btn" onclick="placeOrder()">
+                <span class="btn-icon">🛒</span>
+                <span class="btn-text">{{ t.place_order if t.place_order is defined else 'Place Order' }}</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Login/Register Modal -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>{{ t.login_required if t.login_required is defined else 'Login Required' }}</h3>
+            <button class="close-modal" onclick="closeAuthModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>{{ t.login_to_continue if t.login_to_continue is defined else 'Please login or register to continue with
+                checkout' }}</p>
+            <div class="auth-options">
+                <a href="{{ url_for('login', next=url_for('checkout')) }}" class="auth-btn login-btn">
+                    {{ t.login if t.login is defined else 'Login' }}
+                </a>
+                <a href="{{ url_for('signup', next=url_for('checkout')) }}" class="auth-btn register-btn">
+                    {{ t.register if t.register is defined else 'Register' }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set global variable for authentication status
+    {% if is_logged_in %}
+    window.isUserLoggedIn = true;
+    {% else %}
+    window.isUserLoggedIn = false;
+    {% endif %}
+
+    let cart = [];
+    let discountApplied = false;
+    const DISCOUNT_RATE = 0.10; // 10% discount
+
+    // Load cart from server
+    function loadCartForCheckout() {
+        fetch('/get_cart')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cart = data.cart || [];
+                    updateOrderSummary();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading cart:', error);
+            });
+    }
+
+    // Update order summary display
+    function updateOrderSummary() {
+        const cartItemsContainer = document.querySelector('.cart-items-checkout');
+        const subtotalElement = document.getElementById('subtotal');
+        const discountElement = document.getElementById('discount');
+        const totalElement = document.getElementById('final-total');
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="empty-message">{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}</p>';
+            subtotalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            discountElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            totalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            return;
+        }
+
+        let subtotal = 0;
+        cartItemsContainer.innerHTML = cart.map(item => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            return `<div class="checkout-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.price} {{ t.egp if t.egp is defined else "EGP" }} x ${item.quantity}</p>
+                        </div>
+                        <div class="item-total">
+                            <span>${(item.price * item.quantity)} {{ t.egp if t.egp is defined else "EGP" }}</span>
+                        </div>
+                    </div>`;
+        }).join('');
+
+        const discountAmount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+        const finalTotal = subtotal - discountAmount;
+
+        subtotalElement.textContent = `${subtotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        discountElement.textContent = `-${discountAmount.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+    }
+
+    // Toggle discount
+    function toggleDiscount() {
+        discountApplied = document.getElementById('applyDiscount').checked;
+        updateOrderSummary();
+    }
+
+    // Check if user is logged in
+    function checkAuth() {
+        return window.isUserLoggedIn || false;
+    }
+
+    // Show authentication modal
+    function showAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+    }
+
+    // Close authentication modal
+    function closeAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+    }
+
+    // Place order
+    function placeOrder() {
+        if (cart.length === 0) {
+            alert('{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}');
+            return;
+        }
+
+        // Check if user is authenticated
+        if (!checkAuth()) {
+            showAuthModal();
+            return;
+        }
+
+        // Get form data
+        const form = document.getElementById('checkoutForm');
+        const formData = new FormData(form);
+
+        const orderData = {
+            items: cart,
+            customer: {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                address: formData.get('address'),
+                lat: formData.get('lat'),
+                lng: formData.get('lng'),
+                notes: formData.get('notes')
+            },
+            payment: {
+                method: document.querySelector('input[name="payment_method"]:checked').value,
+                discount_applied: discountApplied,
+                discount_rate: discountApplied ? DISCOUNT_RATE : 0
+            },
+            totals: {
+                subtotal: calculateSubtotal(),
+                discount: discountApplied ? calculateSubtotal() * DISCOUNT_RATE : 0,
+                final_total: calculateFinalTotal()
+            }
+        };
+
+        // Send order to server
+        fetch('/place_order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('{{ t.order_placed if t.order_placed is defined else "Order placed successfully!" }}');
+                    // Clear cart and redirect
+                    cart = [];
+                    window.location.href = '{{ url_for("menu") }}';
+                } else {
+                    alert(data.message || '{{ t.order_error if t.order_error is defined else "Error placing order" }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                alert('{{ t.order_error if t.order_error is defined else "Error placing order" }}');
+            });
+    }
+
+    // Calculate totals
+    function calculateSubtotal() {
+        return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+
+    function calculateFinalTotal() {
+        const subtotal = calculateSubtotal();
+        const discount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+        return subtotal - discount;
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCartForCheckout();
+
+        // Set default coordinates for testing (you can replace this with actual location)
+        document.getElementById('lat').value = '30.0444';
+        document.getElementById('lng').value = '31.2357';
+    });
+</script>
+
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .checkout-title {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .checkout-content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .order-summary {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .cart-items-checkout {
+        margin-bottom: 20px;
+    }
+
+    .checkout-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .checkout-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-info h4 {
+        margin: 0 0 5px 0;
+        color: #fff;
+    }
+
+    .item-info p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .item-total {
+        font-weight: bold;
+        color: #4caf50;
+    }
+
+    .summary-totals {
+        border-top: 2px solid rgba(76, 175, 80, 0.3);
+        padding-top: 15px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .summary-row.discount {
+        color: #ff9800;
+    }
+
+    .summary-row.total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4caf50;
+        border-top: 1px solid rgba(76, 175, 80, 0.3);
+        padding-top: 15px;
+    }
+
+    .customer-info {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .checkout-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+
+    .payment-section {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .discount-option {
+        margin-bottom: 20px;
+    }
+
+    .discount-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .discount-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #4caf50;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .payment-option {
+        position: relative;
+    }
+
+    .payment-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .payment-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-label:hover {
+        border-color: rgba(76, 175, 80, 0.3);
+        background: rgba(76, 175, 80, 0.1);
+    }
+
+    .payment-option input[type="radio"]:checked+.payment-label {
+        border-color: #4caf50;
+        background: rgba(76, 175, 80, 0.2);
+    }
+
+    .payment-icon {
+        font-size: 1.5rem;
+    }
+
+    .payment-text {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .place-order-section {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    .place-order-btn {
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .place-order-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        background: linear-gradient(135deg, #45a049, #5cbf60);
+    }
+
+    .btn-icon {
+        font-size: 1.2rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: rgba(20, 20, 30, 0.95);
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        backdrop-filter: blur(20px);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+        color: #fff;
+        margin: 0;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .modal-body p {
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .auth-options {
+        display: flex;
+        gap: 15px;
+    }
+
+    .auth-btn {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .login-btn {
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        color: #fff;
+    }
+
+    .register-btn {
+        background: transparent;
+        color: #4caf50;
+        border: 2px solid #4caf50;
+    }
+
+    .auth-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .empty-message {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 40px 20px;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+            padding: 15px;
+        }
+
+        .form-row {
+            flex-direction: column;
+        }
+
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

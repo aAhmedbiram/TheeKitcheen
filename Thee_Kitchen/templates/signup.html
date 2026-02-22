@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <form class="glass-card" action="{{ url_for('signup') }}" method="post" id="signupForm">
+        <h2>{{ t.create_account }}</h2>
+
+        {% if next_page %}
+        <input type="hidden" name="next" value="{{ next_page }}">
+        {% endif %}
+
+        <div class="info-box">🔒 {{ t.security_info }}</div>
+
+        <label for="username">{{ t.username }}</label>
+        <input type="text" id="username" name="username" placeholder="{{ t.username_placeholder }}" required>
+
+        <label for="email">{{ t.email }}</label>
+        <input type="email" id="email" name="email" placeholder="{{ t.email_placeholder }}" required>
+
+        <label for="phone">{{ t.phone }}</label>
+        <input type="tel" id="phone" name="phone" placeholder="{{ t.phone_placeholder }}">
+
+        <label for="password">{{ t.password }}</label>
+        <input type="password" name="password" id="password" placeholder="{{ t.password }}" required>
+
+        <button type="submit" id="submitBtn" class="btn-primary" disabled>{{ t.signup }}</button>
+
+        <p class="hint">
+            {{ t.have_account }}
+            <a class="back-login" href="{{ url_for('login') }}">{{ t.login }}</a>
+        </p>
+
+        <div class="password-strength">
+            <div class="password-strength-bar" id="strengthBar"></div>
+        </div>
+
+        <div class="password-requirements" id="passwordRequirements">
+            <strong>{{ t.password_requirements }}:</strong>
+            <ul>
+                <li class="invalid" id="req-length">{{ t.req_length }}</li>
+                <li class="invalid" id="req-uppercase">{{ t.req_uppercase }}</li>
+                <li class="invalid" id="req-lowercase">{{ t.req_lowercase }}</li>
+                <li class="invalid" id="req-number">{{ t.req_number }}</li>
+                <li class="invalid" id="req-special">{{ t.req_special }}</li>
+            </ul>
+        </div>
+    </form>
+</div>
+
+<script>
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('strengthBar');
+    const submitBtn = document.getElementById('submitBtn');
+
+    passwordInput.addEventListener('input', function () {
+        const password = passwordInput.value;
+        checkPasswordStrength(password);
+    });
+
+    function checkPasswordStrength(password) {
+        let requirements = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+
+        document.getElementById('req-length').className = requirements.length ? 'valid' : 'invalid';
+        document.getElementById('req-uppercase').className = requirements.uppercase ? 'valid' : 'invalid';
+        document.getElementById('req-lowercase').className = requirements.lowercase ? 'valid' : 'invalid';
+        document.getElementById('req-number').className = requirements.number ? 'valid' : 'invalid';
+        document.getElementById('req-special').className = requirements.special ? 'valid' : 'invalid';
+
+        const strength = Object.values(requirements).filter(Boolean).length;
+
+        strengthBar.className = 'password-strength-bar';
+        if (strength <= 2) strengthBar.classList.add('weak');
+        else if (strength <= 4) strengthBar.classList.add('medium');
+        else strengthBar.classList.add('strong');
+
+        submitBtn.disabled = !Object.values(requirements).every(Boolean);
+    }
+</script>
+{% endblock %}

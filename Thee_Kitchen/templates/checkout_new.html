@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-title">{{ t.checkout if t.checkout is defined else 'Checkout' }}</h1>
+
+    <form method="POST" action="{{ url_for('place_order') }}" id="checkoutForm">
+        <div class="checkout-content">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h2>{{ t.order_summary if t.order_summary is defined else 'Order Summary' }}</h2>
+                <div class="cart-items-checkout">
+                    {% for item in cart %}
+                    <div class="checkout-item">
+                        <div class="item-info">
+                            <h4>{{ item.name }}</h4>
+                            <p>{{ item.price }} {{ t.egp if t.egp is defined else 'EGP' }} x {{ item.quantity }}</p>
+                        </div>
+                        <div class="item-total">
+                            <span>{{ (item.price * item.quantity) }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-totals">
+                    <div class="summary-row">
+                        <span>{{ t.subtotal if t.subtotal is defined else 'Subtotal' }}:</span>
+                        <span id="subtotal">{{ subtotal }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                    </div>
+
+                    {% if discount_applied %}
+                    <div class="summary-row discount">
+                        <span>{{ t.discount if t.discount is defined else 'Discount (10%)' }}:</span>
+                        <span id="discount">-{{ discount_amount }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                    </div>
+                    {% endif %}
+
+                    <div class="summary-row delivery-row" id="deliveryRow" style="display: none;">
+                        <span>{{ t.delivery_fee_label if t.delivery_fee_label is defined else 'Delivery Fee' }}:</span>
+                        <span id="deliveryFee">0 {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                    </div>
+
+                    <div class="summary-row delivery-distance" id="distanceRow" style="display: none;">
+                        <span>{{ t.delivery_distance_label if t.delivery_distance_label is defined else 'Distance'
+                            }}:</span>
+                        <span id="deliveryDistance">0 km</span>
+                    </div>
+
+                    <div class="summary-row total">
+                        <span>{{ t.total if t.total is defined else 'Total' }}:</span>
+                        <span id="final-total">{{ final_total if final_total is defined else subtotal }} {{ t.egp if
+                            t.egp is defined else 'EGP' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="customer-info">
+                <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">{{ t.full_name if t.full_name is defined else 'Full Name' }}</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{{ t.phone if t.phone is defined else 'Phone' }}</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address_text">{{ t.delivery_address if t.delivery_address is defined else 'Delivery
+                            Address' }}</label>
+                        <textarea id="address_text" name="address_text" rows="3" required
+                            placeholder="{{ t.address_placeholder if t.address_placeholder is defined else 'Enter your full delivery address' }}"></textarea>
+                    </div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="location-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button type="button" class="location-btn" onclick="getLocation()">
+                                📍 {{ t.use_my_location if t.use_my_location is defined else 'Use My Location' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="location-status" id="locationStatus">
+                        <!-- Status messages will appear here -->
+                    </div>
+                </div>
+
+                <!-- Hidden coordinates -->
+                <input type="hidden" id="lat" name="lat">
+                <input type="hidden" id="lng" name="lng">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="notes">{{ t.order_notes if t.order_notes is defined else 'Order Notes (Optional)'
+                            }}</label>
+                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="payment-section">
+                <h2>{{ t.payment_method if t.payment_method is defined else 'Payment Method' }}</h2>
+
+                <!-- Discount Option -->
+                <div class="discount-option">
+                    <label class="discount-label">
+                        <input type="checkbox" id="applyDiscount" onchange="toggleDiscount()">
+                        {{ t.apply_10_discount if t.apply_10_discount is defined else 'Apply 10% Discount' }}
+                    </label>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="payment-methods">
+                    <div class="payment-option">
+                        <input type="radio" id="cash" name="payment_method" value="cash" checked>
+                        <label for="cash" class="payment-label">
+                            <span class="payment-icon">💵</span>
+                            <span class="payment-text">{{ t.cash_on_delivery if t.cash_on_delivery is defined else 'Cash
+                                on Delivery' }}</span>
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="card" name="payment_method" value="card">
+                        <label for="card" class="payment-label">
+                            <span class="payment-icon">💳</span>
+                            <span class="payment-text">{{ t.credit_card if t.credit_card is defined else 'Credit Card'
+                                }}</span>
+                        </label>
+                    </div>
+
+                    <div class="payment-option">
+                        <input type="radio" id="wallet" name="payment_method" value="wallet">
+                        <label for="wallet" class="payment-label">
+                            <span class="payment-icon">📱</span>
+                            <span class="payment-text">{{ t.digital_wallet if t.digital_wallet is defined else 'Digital
+                                Wallet' }}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Place Order Button -->
+            <div class="place-order-section">
+                <button type="submit" class="place-order-btn" id="confirmBtn" disabled>
+                    <span class="btn-icon">🛒</span>
+                    <span class="btn-text">{{ t.confirm_order if t.confirm_order is defined else 'Confirm Order'
+                        }}</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    let cart = [];
+    let discountApplied = false;
+    let deliveryQuote = null;
+    const DISCOUNT_RATE = 0.10; // 10% discount
+
+    // Load cart from server
+    function loadCartForCheckout() {
+        fetch('/get_cart')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cart = data.cart || [];
+                    updateOrderSummary();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading cart:', error);
+            });
+    }
+
+    // Get user location
+    function getLocation() {
+        const statusDiv = document.getElementById('locationStatus');
+
+        if (!navigator.geolocation) {
+            statusDiv.innerHTML = '<div class="status-error">{{ t.please_allow_location if t.please_allow_location is defined else "Geolocation is not supported by your browser" }}</div>';
+            return;
+        }
+
+        statusDiv.innerHTML = '<div class="status-loading">{{ t.calculating_delivery if t.calculating_delivery is defined else "Getting your location..." }}</div>';
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                document.getElementById('lat').value = lat;
+                document.getElementById('lng').value = lng;
+
+                // Get delivery quote
+                getDeliveryQuote(lat, lng);
+            },
+            (error) => {
+                let message = '{{ t.please_allow_location if t.please_allow_location is defined else "Please allow location access" }}';
+                if (error.code === error.PERMISSION_DENIED) {
+                    message = '{{ t.please_allow_location if t.please_allow_location is defined else "Location permission denied" }}';
+                } else if (error.code === error.POSITION_UNAVAILABLE) {
+                    message = 'Location information unavailable';
+                } else if (error.code === error.TIMEOUT) {
+                    message = 'Location request timed out';
+                }
+                statusDiv.innerHTML = `<div class="status-error">${message}</div>`;
+                document.getElementById('confirmBtn').disabled = true;
+            },
+            { timeout: 10000 }
+        );
+    }
+
+    // Get delivery quote
+    function getDeliveryQuote(lat, lng) {
+        const statusDiv = document.getElementById('locationStatus');
+        statusDiv.innerHTML = '<div class="status-loading">{{ t.calculating_delivery if t.calculating_delivery is defined else "Calculating delivery fee..." }}</div>';
+        document.getElementById('confirmBtn').disabled = true;
+
+        const formData = new FormData();
+        formData.append('lat', lat);
+        formData.append('lng', lng);
+
+        fetch('/api/delivery/quote', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    if (data.out_of_range) {
+                        statusDiv.innerHTML = `<div class="status-error">{{ t.out_of_delivery_range if t.out_of_delivery_range is defined else "Out of delivery range" }} (${data.distance_km} km)</div>`;
+                        document.getElementById('confirmBtn').disabled = true;
+                        deliveryQuote = null;
+                    } else {
+                        statusDiv.innerHTML = `<div class="status-success">✓ {{ t.delivery_fee_label if t.delivery_fee_label is defined else "Delivery available" }}: ${data.distance_km} km</div>`;
+                        deliveryQuote = data;
+                        document.getElementById('confirmBtn').disabled = false;
+
+                        // Update delivery display
+                        document.getElementById('deliveryRow').style.display = 'flex';
+                        document.getElementById('distanceRow').style.display = 'flex';
+                        document.getElementById('deliveryFee').textContent = `${data.delivery_fee} {{ t.egp if t.egp is defined else "EGP" }}`;
+                        document.getElementById('deliveryDistance').textContent = `${data.distance_km} km`;
+                    }
+                    updateOrderSummary();
+                } else {
+                    statusDiv.innerHTML = `<div class="status-error">${data.error}</div>`;
+                    document.getElementById('confirmBtn').disabled = true;
+                    deliveryQuote = null;
+                }
+            })
+            .catch(error => {
+                console.error('Delivery quote error:', error);
+                statusDiv.innerHTML = `<div class="status-error">{{ t.delivery_try_again if t.delivery_try_again is defined else "Please try again" }}</div>`;
+                document.getElementById('confirmBtn').disabled = true;
+                deliveryQuote = null;
+            });
+    }
+
+    // Update order summary display
+    function updateOrderSummary() {
+        const cartItemsContainer = document.querySelector('.cart-items-checkout');
+        const subtotalElement = document.getElementById('subtotal');
+        const discountElement = document.getElementById('discount');
+        const totalElement = document.getElementById('final-total');
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="empty-message">{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}</p>';
+            subtotalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            if (discountElement) discountElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            totalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            return;
+        }
+
+        let subtotal = 0;
+        cartItemsContainer.innerHTML = cart.map(item => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            return `<div class="checkout-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.price} {{ t.egp if t.egp is defined else "EGP" }} x ${item.quantity}</p>
+                        </div>
+                        <div class="item-total">
+                            <span>${(item.price * item.quantity)} {{ t.egp if t.egp is defined else "EGP" }}</span>
+                        </div>
+                    </div>`;
+        }).join('');
+
+        subtotalElement.textContent = `${subtotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+
+        // Calculate totals
+        const discountAmount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+        const deliveryFee = deliveryQuote ? deliveryQuote.delivery_fee : 0;
+        const finalTotal = subtotal - discountAmount + deliveryFee;
+
+        if (discountElement) {
+            discountElement.textContent = `-${discountAmount.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        }
+
+        totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+    }
+
+    // Toggle discount
+    function toggleDiscount() {
+        discountApplied = document.getElementById('applyDiscount').checked;
+        updateOrderSummary();
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCartForCheckout();
+    });
+</script>
+
+<style>
+    .checkout-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .checkout-title {
+        grid-column: 1 / -1;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .checkout-content {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .order-summary {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .cart-items-checkout {
+        margin-bottom: 20px;
+    }
+
+    .checkout-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .checkout-item:last-child {
+        border-bottom: none;
+    }
+
+    .item-info h4 {
+        margin: 0 0 5px 0;
+        color: #fff;
+    }
+
+    .item-info p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .item-total {
+        font-weight: bold;
+        color: #4caf50;
+    }
+
+    .summary-totals {
+        border-top: 2px solid rgba(76, 175, 80, 0.3);
+        padding-top: 15px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .summary-row.discount {
+        color: #ff9800;
+    }
+
+    .summary-row.delivery-row {
+        color: #2196f3;
+    }
+
+    .summary-row.delivery-distance {
+        color: #9c27b0;
+    }
+
+    .summary-row.total {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #4caf50;
+        border-top: 1px solid rgba(76, 175, 80, 0.3);
+        padding-top: 15px;
+    }
+
+    .customer-info {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .checkout-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: #fff;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px;
+        color: #fff;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.3);
+    }
+
+    .location-section {
+        margin: 20px 0;
+    }
+
+    .location-btn {
+        background: linear-gradient(135deg, #2196f3, #42a5f5);
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .location-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+    .location-status {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .status-loading {
+        background: rgba(33, 150, 243, 0.1);
+        color: #2196f3;
+        border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+
+    .status-success {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .status-error {
+        background: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .payment-section {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .discount-option {
+        margin-bottom: 20px;
+    }
+
+    .discount-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .discount-label input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        accent-color: #4caf50;
+    }
+
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .payment-option {
+        position: relative;
+    }
+
+    .payment-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .payment-label {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid transparent;
+        border-radius: 12px;
+        padding: 15px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-label:hover {
+        border-color: rgba(76, 175, 80, 0.3);
+        background: rgba(76, 175, 80, 0.1);
+    }
+
+    .payment-option input[type="radio"]:checked+.payment-label {
+        border-color: #4caf50;
+        background: rgba(76, 175, 80, 0.2);
+    }
+
+    .payment-icon {
+        font-size: 1.5rem;
+    }
+
+    .payment-text {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    .place-order-section {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
+    .place-order-btn {
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .place-order-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        background: linear-gradient(135deg, #45a049, #5cbf60);
+    }
+
+    .place-order-btn:disabled {
+        background: #666;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-icon {
+        font-size: 1.2rem;
+    }
+
+    .empty-message {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+        padding: 40px 20px;
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .checkout-container {
+            grid-template-columns: 1fr;
+            padding: 15px;
+        }
+
+        .form-row {
+            flex-direction: column;
+        }
+
+        .payment-methods {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="auth-container">
+    <form class="glass-card" action="{{ url_for('login') }}" method="post">
+        <h2>{{ t.login }}</h2>
+
+        {% if next_page %}
+        <input type="hidden" name="next" value="{{ next_page }}">
+        {% endif %}
+
+        <label for="username">{{ t.username }}</label>
+        <input type="text" id="username" name="username" required placeholder="{{ t.username_placeholder }}">
+
+        <label for="password">{{ t.password }}</label>
+        <input type="password" id="password" name="password" required placeholder="{{ t.password }}">
+
+        <button type="submit" class="btn-primary">{{ t.login }}</button>
+
+        <div class="link-text">
+            <a href="{{ url_for('resend_verification') }}">Didn't receive verification email?</a>
+        </div>
+
+        <a class="btn-outline" href="{{ url_for('signup') }}">{{ t.signup }}</a>
+    </form>
+</div>
+{% endblock %}

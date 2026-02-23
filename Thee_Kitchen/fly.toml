@@ -14,7 +14,7 @@ primary_region = "cai"
 [env]
   PORT = "8080"
   FLASK_ENV = "production"
-  DATABASE_URL = "sqlite:///app.db"
+  DATABASE_URL = "postgresql://neondb_owner:password@epoxy-dark-forest-8379398.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
 [http_service]
   internal_port = 8080

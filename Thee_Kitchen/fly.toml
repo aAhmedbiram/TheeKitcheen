@@ -7,10 +7,6 @@ primary_region = "cai"
   builder = "dockerfile"
   dockerfile = "Dockerfile"
 
-[deploy]
-  release_command = "python app.py"
-  internal_port = 8080
-
 [env]
   PORT = "8080"
   FLASK_ENV = "production"

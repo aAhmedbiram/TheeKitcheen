@@ -1,31 +1,38 @@
-# fly.toml - Fly.io configuration for Thee Kitchen
+# fly.toml app configuration file generated for thee-kitchen on 2026-02-23T16:50:22+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "thee-kitchen"
-primary_region = "cai"
+app = 'thee-kitchen'
+primary_region = 'cdg'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  PORT = "8080"
-  FLASK_ENV = "production"
-  DATABASE_URL = "postgresql://neondb_owner:password@epoxy-dark-forest-8379398.us-east-1.aws.neon.tech/neondb?sslmode=require"
+  FLASK_ENV = 'production'
+  PORT = '8080'
+
+[processes]
+  app = 'gunicorn --bind 0.0.0.0:8080 app:app'
+
+[[mounts]]
+  source = 'data'
+  destination = '/data'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  processes = ["app"]
+  processes = ['app']
 
 [checks]
   [checks.alive]
-    type = "tcp"
-    interval = "15s"
-    timeout = "2s"
-    grace_period = "5s"
+    type = 'tcp'
+    interval = '15s'
+    timeout = '2s'
+    grace_period = '5s'
 
-[[mounts]]
-  source = "data"
-  destination = "/data"
-
-[processes]
-  app = "gunicorn --bind 0.0.0.0:8080 app:app"
+[[vm]]
+  memory = '1gb'
+  cpus = 1
+  memory_mb = 1024

@@ -4,7 +4,12 @@ app = "thee-kitchen"
 primary_region = "cai"
 
 [build]
-  builder = "paket"
+  builder = "dockerfile"
+  dockerfile = "Dockerfile"
+
+[deploy]
+  release_command = "python app.py"
+  internal_port = 8080
 
 [env]
   PORT = "8080"
@@ -27,4 +32,4 @@ primary_region = "cai"
   destination = "/data"
 
 [processes]
-  app = "python app.py"
+  app = "gunicorn --bind 0.0.0.0:8080 app:app"

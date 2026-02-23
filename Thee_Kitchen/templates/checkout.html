@@ -41,6 +41,60 @@
             </div>
         </div>
 
+        <!-- Address & Delivery -->
+        <div class="delivery-section">
+            <h2>{{ t.address_section_title if t.address_section_title is defined else 'Delivery Address' }}</h2>
+
+            <div class="address-form">
+                <div class="form-group">
+                    <label for="address">{{ t.address_details if t.address_details is defined else 'Address Details'
+                        }}</label>
+                    <textarea id="address" name="address" rows="3" required
+                        placeholder="{{ t.address_placeholder if t.address_placeholder is defined else 'Enter your full delivery address' }}"
+                        {% if user_info and user_info.address %}{{ user_info.address }}{% endif %}></textarea>
+                </div>
+
+                <div class="location-options">
+                    <button type="button" class="location-btn" onclick="getCurrentLocation()">
+                        <span class="location-icon">📍</span>
+                        <span class="location-text">{{ t.use_my_location if t.use_my_location is defined else 'Use My
+                            Location' }}</span>
+                    </button>
+
+                    <div class="manual-location">
+                        <small>or enter coordinates manually:</small>
+                        <div class="coord-inputs">
+                            <input type="number" id="manual-lat" placeholder="Latitude" step="any"
+                                onchange="updateLocationFromManual()">
+                            <input type="number" id="manual-lng" placeholder="Longitude" step="any"
+                                onchange="updateLocationFromManual()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Quote Display -->
+                <div id="delivery-quote" class="delivery-quote" style="display: none;">
+                    <div class="quote-content">
+                        <div class="quote-item">
+                            <span>{{ t.delivery_distance_label if t.delivery_distance_label is defined else 'Distance'
+                                }}:</span>
+                            <span id="delivery-distance">--</span>
+                        </div>
+                        <div class="quote-item">
+                            <span>{{ t.delivery_fee_label if t.delivery_fee_label is defined else 'Delivery Fee'
+                                }}:</span>
+                            <span id="delivery-fee">--</span>
+                        </div>
+                    </div>
+                    <div id="delivery-error" class="delivery-error" style="display: none;"></div>
+                </div>
+
+                <!-- Hidden fields for coordinates -->
+                <input type="hidden" id="lat" name="lat" value="">
+                <input type="hidden" id="lng" name="lng" value="">
+            </div>
+        </div>
+
         <!-- Customer Information -->
         <div class="customer-info">
             <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
@@ -316,6 +370,144 @@
         const subtotal = calculateSubtotal();
         const discount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
         return subtotal - discount;
+    }
+
+    // Get current location using browser geolocation
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    // Update hidden fields
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value = lng;
+
+                    // Update manual inputs
+                    document.getElementById('manual-lat').value = lat;
+                    document.getElementById('manual-lng').value = lng;
+
+                    // Get delivery quote
+                    getDeliveryQuote(lat, lng);
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    showDeliveryError('{{ t.location_permission_denied if t.location_permission_denied is defined else 'Location permission denied' }}');
+                },
+                options
+            );
+        } else {
+            showDeliveryError('Geolocation is not supported by your browser');
+        }
+    }
+
+    // Update location from manual input
+    function updateLocationFromManual() {
+        const lat = parseFloat(document.getElementById('manual-lat').value);
+        const lng = parseFloat(document.getElementById('manual-lng').value);
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+            getDeliveryQuote(lat, lng);
+        }
+    }
+
+    // Get delivery quote from API
+    function getDeliveryQuote(lat, lng) {
+        const quoteDiv = document.getElementById('delivery-quote');
+        const errorDiv = document.getElementById('delivery-error');
+        const distanceSpan = document.getElementById('delivery-distance');
+        const feeSpan = document.getElementById('delivery-fee');
+
+        // Show loading state
+        quoteDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        distanceSpan.textContent = '{{ t.calculating_delivery if t.calculating_delivery is defined else 'Calculating...' }}';
+        feeSpan.textContent = '--';
+
+        // Call API
+        fetch('/api/delivery/quote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lat: lat,
+                lng: lng
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    if (data.out_of_range) {
+                        distanceSpan.textContent = data.distance_km + ' km';
+                        feeSpan.textContent = '--';
+                        showDeliveryError('{{ t.delivery_out_of_range if t.delivery_out_of_range is defined else 'Out of delivery range' }}');
+                        disableOrderButton(true);
+                    } else {
+                        distanceSpan.textContent = data.distance_km + ' km';
+                        feeSpan.textContent = data.delivery_fee + ' {{ t.egp if t.egp is defined else "EGP" }}';
+                        errorDiv.style.display = 'none';
+                        disableOrderButton(false);
+                        updateTotalsWithDelivery(data.delivery_fee);
+                    }
+                } else {
+                    showDeliveryError(data.error || '{{ t.delivery_api_error_try_again if t.delivery_api_error_try_again is defined else 'Error calculating delivery' }}');
+                    disableOrderButton(true);
+                }
+            })
+            .catch(error => {
+                console.error('Delivery quote error:', error);
+                showDeliveryError('{{ t.delivery_api_error_try_again if t.delivery_api_error_try_again is defined else 'Error calculating delivery' }}');
+                disableOrderButton(true);
+            });
+    }
+
+    // Show delivery error
+    function showDeliveryError(message) {
+        const errorDiv = document.getElementById('delivery-error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    // Disable/enable order button
+    function disableOrderButton(disable) {
+        const orderBtn = document.querySelector('.place-order-btn');
+        if (orderBtn) {
+            orderBtn.disabled = disable;
+            if (disable) {
+                orderBtn.style.opacity = '0.5';
+                orderBtn.style.cursor = 'not-allowed';
+            } else {
+                orderBtn.style.opacity = '1';
+                orderBtn.style.cursor = 'pointer';
+            }
+        }
+    }
+
+    // Update totals with delivery fee
+    function updateTotalsWithDelivery(deliveryFee) {
+        const subtotalElement = document.getElementById('subtotal');
+        const totalElement = document.getElementById('final-total');
+        const discountElement = document.getElementById('discount');
+
+        if (subtotalElement && totalElement) {
+            const subtotalText = subtotalElement.textContent;
+            const subtotal = parseFloat(subtotalText.replace(/[^\d.-]/g, ''));
+
+            const discountAmount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+            const finalTotal = subtotal + deliveryFee - discountAmount;
+
+            totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        }
     }
 
     // Initialize on page load

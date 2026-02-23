@@ -79,13 +79,18 @@ class Config:
             "max_overflow": 20
         }
     
-    # Delivery Configuration
-    DELIVERY_HUBS = [
-        {"lat": 30.1610413, "lng": 31.5609381},  # Future City hub
-        {"lat": 30.0809753, "lng": 31.2355689}   # Shubra hub
-    ]
-    DELIVERY_NEAR_FEE = 50
-    DELIVERY_FAR_FEE = 80
-    DELIVERY_NEAR_KM = 25.0
+    # OpenRouteService API configuration
+    ORS_API_KEY = os.getenv("ORS_API_KEY", "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjQ0MWFkNjJiNzI3ODRlNGJhMzJiMzQwMDRkMTExNWQwIiwiaCI6Im11cm11cjY0In0=")
+
+    # Delivery configuration
+    DELIVERY_FEE_NEAR = 50
+    DELIVERY_FEE_FAR = 80
+    DELIVERY_THRESHOLD_NEAR_KM = 25.0
     DELIVERY_MAX_KM = 70.0
+
+    # Delivery hubs (backend only - never expose to frontend)
+    DELIVERY_HUBS = [
+        {"lat": 30.1610413, "lng": 31.5609381},  # Future City
+        {"lat": 30.0809753, "lng": 31.2355689}   # Shubra Masr
+    ]
     OSRM_BASE_URL = "https://router.project-osrm.org"

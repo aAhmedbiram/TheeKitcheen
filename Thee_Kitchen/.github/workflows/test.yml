@@ -1,0 +1,72 @@
+name: Tests (Neon Postgres)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Ensure Neon secret exists
+        env:
+          NEON_CONNECTION_STRING: ${{ secrets.NEON_CONNECTION_STRING }}
+        run: |
+          if [ -z "$NEON_CONNECTION_STRING" ]; then
+            echo "❌ Missing GitHub secret: NEON_CONNECTION_STRING"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-test.txt
+          pip install psycopg2-binary pytest-cov
+
+      - name: Run tests (Neon)
+        env:
+          ENV: production
+          FLASK_ENV: testing
+          FLASK_DEBUG: "0"
+          DATABASE_URL: ${{ secrets.NEON_CONNECTION_STRING }}
+        run: |
+          python -c "from config import Config; print('DB:', Config.SANITIZED_DB_URI if hasattr(Config,'SANITIZED_DB_URI') else Config.SQLALCHEMY_DATABASE_URI.split('@')[-1])"
+          pytest -v --cov=. --cov-report=xml --junitxml=test-results-${{ matrix.python-version }}.xml
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: coverage.xml
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: test-results-${{ matrix.python-version }}.xml
+
+      - name: Security scan (Bandit)
+        run: |
+          pip install bandit
+          bandit -r . -f json -o security-report.json || true
+
+      - name: Upload security scan
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-${{ matrix.python-version }}
+          path: security-report.json

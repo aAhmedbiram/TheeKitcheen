@@ -41,32 +41,56 @@
             </div>
         </div>
 
-        <!-- Address & Delivery -->
-        <div class="delivery-section">
+        <!-- Customer Information & Delivery -->
+        <div class="customer-info">
+            <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
 
-            <div class="address-form">
-                <div class="form-group">
-                    <label for="address">{{ t.address_details if t.address_details is defined else 'Address Details'
-                        }}</label>
-                    <textarea id="address" name="address" rows="3" required
-                        placeholder="{{ t.address_placeholder if t.address_placeholder is defined else 'Enter your full delivery address' }}"
-                        {% if user_info and user_info.address %}{{ user_info.address }}{% endif %}></textarea>
+            <form id="checkoutForm" class="checkout-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">{{ t.full_name if t.full_name is defined else 'Full Name' }}</label>
+                        <input type="text" id="name" name="name" required {% if user_info and user_info.name
+                            %}value="{{ user_info.name }}" {% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{{ t.phone if t.phone is defined else 'Phone' }}</label>
+                        <input type="tel" id="phone" name="phone" required {% if user_info and user_info.phone
+                            %}value="{{ user_info.phone }}" {% endif %}>
+                    </div>
                 </div>
 
-                <div class="location-options">
-                    <button type="button" class="location-btn" onclick="getCurrentLocation()">
-                        <span class="location-icon">📍</span>
-                        <span class="location-text">{{ t.use_my_location if t.use_my_location is defined else 'Use My
-                            Location' }}</span>
-                    </button>
+                <!-- Address Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address_text">{{ t.address_details if t.address_details is defined else 'Address
+                            Details' }}</label>
+                        <textarea id="address_text" name="address_text" rows="3" required
+                            placeholder="{{ t.address_placeholder if t.address_placeholder is defined else 'Enter your full delivery address' }}"
+                            {% if user_info and user_info.address %}{{ user_info.address }}{% endif %}></textarea>
+                    </div>
+                </div>
 
-                    <div class="manual-location">
-                        <small>or enter coordinates manually:</small>
-                        <div class="coord-inputs">
-                            <input type="number" id="manual-lat" placeholder="Latitude" step="any"
-                                onchange="updateLocationFromManual()">
-                            <input type="number" id="manual-lng" placeholder="Longitude" step="any"
-                                onchange="updateLocationFromManual()">
+                <!-- Location Options -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ t.delivery_options if t.delivery_options is defined else 'Delivery Location'
+                            }}</label>
+                        <div class="location-options">
+                            <button type="button" class="location-btn" onclick="getCurrentLocation()">
+                                <span class="location-icon">📍</span>
+                                <span class="location-text">{{ t.use_my_location if t.use_my_location is defined else
+                                    'Use My Location' }}</span>
+                            </button>
+
+                            <div class="manual-location">
+                                <small>or enter coordinates manually:</small>
+                                <div class="coord-inputs">
+                                    <input type="number" id="manual-lat" placeholder="Latitude" step="any"
+                                        onchange="updateLocationFromManual()">
+                                    <input type="number" id="manual-lng" placeholder="Longitude" step="any"
+                                        onchange="updateLocationFromManual()">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -87,38 +111,6 @@
                     </div>
                     <div id="delivery-error" class="delivery-error" style="display: none;"></div>
                 </div>
-
-                <!-- Hidden fields for coordinates -->
-                <input type="hidden" id="lat" name="lat" value="">
-                <input type="hidden" id="lng" name="lng" value="">
-            </div>
-        </div>
-
-        <!-- Customer Information -->
-        <div class="customer-info">
-            <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
-            <form id="checkoutForm" class="checkout-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="name">{{ t.full_name if t.full_name is defined else 'Full Name' }}</label>
-                        <input type="text" id="name" name="name" required {% if user_info and user_info.name
-                            %}value="{{ user_info.name }}" {% endif %}>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">{{ t.phone if t.phone is defined else 'Phone' }}</label>
-                        <input type="tel" id="phone" name="phone" required {% if user_info and user_info.phone
-                            %}value="{{ user_info.phone }}" {% endif %}>
-                    </div>
-                </div>
-
-                <!-- <div class="form-row">
-                    <div class="form-group">
-                        <label for="address">{{ t.delivery_address if t.delivery_address is defined else 'Delivery
-                            Address' }}</label>
-                        <textarea id="address" name="address" rows="3" required {% if user_info and user_info.address
-                            %}>{{ user_info.address }}{% endif %}></textarea>
-                    </div>
-                </div> -->
 
                 <!-- Hidden fields for coordinates -->
                 <input type="hidden" id="lat" name="lat" value="">
@@ -179,7 +171,7 @@
 
         <!-- Place Order Button -->
         <div class="place-order-section">
-            <button type="button" class="place-order-btn" onclick="placeOrder()">
+            <button type="submit" form="checkoutForm" class="place-order-btn" onclick="placeOrder(event)">
                 <span class="btn-icon">🛒</span>
                 <span class="btn-text">{{ t.place_order if t.place_order is defined else 'Place Order' }}</span>
             </button>
@@ -246,7 +238,7 @@
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = '<p class="empty-message">{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}</p>';
             subtotalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
-            discountElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            if (discountElement) discountElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
             totalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
             return;
         }
@@ -262,7 +254,7 @@
                             <p>${item.price} {{ t.egp if t.egp is defined else "EGP" }} x ${item.quantity}</p>
                         </div>
                         <div class="item-total">
-                            <span>${(item.price * item.quantity)} {{ t.egp if t.egp is defined else "EGP" }}</span>
+                            <span>${itemTotal} {{ t.egp if t.egp is defined else "EGP" }}</span>
                         </div>
                     </div>`;
         }).join('');
@@ -271,7 +263,9 @@
         const finalTotal = subtotal - discountAmount;
 
         subtotalElement.textContent = `${subtotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
-        discountElement.textContent = `-${discountAmount.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        if (discountElement) {
+            discountElement.textContent = `-${discountAmount.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        }
         totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
     }
 
@@ -297,7 +291,9 @@
     }
 
     // Place order
-    function placeOrder() {
+    function placeOrder(event) {
+        event.preventDefault(); // Prevent form submission
+
         if (cart.length === 0) {
             alert('{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}');
             return;
@@ -318,7 +314,7 @@
             customer: {
                 name: formData.get('name'),
                 phone: formData.get('phone'),
-                address: formData.get('address'),
+                address: formData.get('address_text'),
                 lat: formData.get('lat'),
                 lng: formData.get('lng'),
                 notes: formData.get('notes')
@@ -512,10 +508,6 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function () {
         loadCartForCheckout();
-
-        // Set default coordinates for testing (you can replace this with actual location)
-        document.getElementById('lat').value = '30.0444';
-        document.getElementById('lng').value = '31.2357';
     });
 </script>
 
@@ -547,72 +539,24 @@
     }
 
     .order-summary {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+        background: white;
         padding: 25px;
-    }
-
-    .cart-items-checkout {
-        margin-bottom: 20px;
-    }
-
-    .checkout-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .checkout-item:last-child {
-        border-bottom: none;
-    }
-
-    .item-info h4 {
-        margin: 0 0 5px 0;
-        color: #fff;
-    }
-
-    .item-info p {
-        margin: 0;
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .item-total {
-        font-weight: bold;
-        color: #4caf50;
-    }
-
-    .summary-totals {
-        border-top: 2px solid rgba(76, 175, 80, 0.3);
-        padding-top: 15px;
-    }
-
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-    }
-
-    .summary-row.discount {
-        color: #ff9800;
-    }
-
-    .summary-row.total {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #4caf50;
-        border-top: 1px solid rgba(76, 175, 80, 0.3);
-        padding-top: 15px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
     .customer-info {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
+        background: white;
         padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .payment-section {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
     .checkout-form {
@@ -622,45 +566,119 @@
     }
 
     .form-row {
-        display: flex;
-        gap: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
     }
 
     .form-group {
-        flex: 1;
         display: flex;
         flex-direction: column;
         gap: 8px;
     }
 
     .form-group label {
-        color: #fff;
         font-weight: 600;
-        margin-bottom: 5px;
+        color: #333;
+        font-size: 0.95rem;
     }
 
     .form-group input,
     .form-group textarea {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
         border-radius: 8px;
-        padding: 12px;
-        color: #fff;
         font-size: 1rem;
+        transition: all 0.3s ease;
+        font-family: inherit;
     }
 
     .form-group input:focus,
     .form-group textarea:focus {
         outline: none;
         border-color: #4caf50;
-        box-shadow: 0 0 0 5px rgba(76, 175, 80, 0.3);
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
     }
 
-    .payment-section {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        padding: 25px;
+    .location-options {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .location-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .location-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+    }
+
+    .manual-location {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .manual-location small {
+        color: #666;
+        font-size: 0.85rem;
+    }
+
+    .coord-inputs {
+        display: flex;
+        gap: 10px;
+    }
+
+    .coord-inputs input {
+        flex: 1;
+        padding: 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 0.9rem;
+    }
+
+    .delivery-quote {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+    }
+
+    .quote-content {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+
+    .quote-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+    }
+
+    .delivery-error {
+        margin-top: 10px;
+        padding: 10px;
+        background: #ffebee;
+        color: #c62828;
+        border-radius: 6px;
+        font-size: 0.9rem;
     }
 
     .discount-option {
@@ -671,91 +689,79 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #fff;
         cursor: pointer;
-    }
-
-    .discount-label input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        accent-color: #4caf50;
+        font-weight: 600;
     }
 
     .payment-methods {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        display: flex;
+        flex-direction: column;
         gap: 15px;
     }
 
     .payment-option {
-        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .payment-option:hover {
+        border-color: #4caf50;
+        background: #f8f9fa;
     }
 
     .payment-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
+        margin-right: 15px;
     }
 
     .payment-label {
         display: flex;
         align-items: center;
-        gap: 12px;
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid transparent;
-        border-radius: 12px;
-        padding: 15px 20px;
+        gap: 10px;
         cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .payment-label:hover {
-        border-color: rgba(76, 175, 80, 0.3);
-        background: rgba(76, 175, 80, 0.1);
-    }
-
-    .payment-option input[type="radio"]:checked+.payment-label {
-        border-color: #4caf50;
-        background: rgba(76, 175, 80, 0.2);
+        font-weight: 600;
     }
 
     .payment-icon {
-        font-size: 1.5rem;
-    }
-
-    .payment-text {
-        color: #fff;
-        font-weight: 600;
+        font-size: 1.2rem;
     }
 
     .place-order-section {
         grid-column: 1 / -1;
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
     }
 
     .place-order-btn {
-        background: linear-gradient(135deg, #4caf50, #66d66a);
-        color: #fff;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 25px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
         display: flex;
         align-items: center;
         gap: 10px;
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #4caf50, #66d66a);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
     }
 
     .place-order-btn:hover {
-        transform: translateY(-2px);
+        transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
-        background: linear-gradient(135deg, #45a049, #5cbf60);
     }
 
-    .btn-icon {
-        font-size: 1.2rem;
+    .place-order-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
     }
 
     .modal {
@@ -765,19 +771,19 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        z-index: 2000;
+        background: rgba(0, 0, 0, 0.5);
         justify-content: center;
         align-items: center;
+        z-index: 1000;
     }
 
     .modal-content {
-        background: rgba(20, 20, 30, 0.95);
-        border-radius: 15px;
+        background: white;
         padding: 30px;
+        border-radius: 15px;
         max-width: 400px;
         width: 90%;
-        backdrop-filter: blur(20px);
+        text-align: center;
     }
 
     .modal-header {
@@ -787,61 +793,44 @@
         margin-bottom: 20px;
     }
 
-    .modal-header h3 {
-        color: #fff;
-        margin: 0;
-    }
-
     .close-modal {
         background: none;
         border: none;
-        color: #fff;
         font-size: 1.5rem;
         cursor: pointer;
-    }
-
-    .modal-body p {
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 20px;
-        line-height: 1.5;
+        color: #666;
     }
 
     .auth-options {
         display: flex;
+        flex-direction: column;
         gap: 15px;
+        margin-top: 20px;
     }
 
     .auth-btn {
-        flex: 1;
+        display: block;
         padding: 12px 20px;
-        border-radius: 8px;
         text-decoration: none;
-        text-align: center;
+        border-radius: 8px;
         font-weight: 600;
+        text-align: center;
         transition: all 0.3s ease;
     }
 
     .login-btn {
-        background: linear-gradient(135deg, #4caf50, #66d66a);
-        color: #fff;
+        background: #4caf50;
+        color: white;
     }
 
     .register-btn {
-        background: transparent;
-        color: #4caf50;
-        border: 2px solid #4caf50;
+        background: #2196f3;
+        color: white;
     }
 
     .auth-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-    }
-
-    .empty-message {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.7);
-        padding: 40px 20px;
-        font-size: 1.1rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
     @media (max-width: 768px) {
@@ -851,12 +840,18 @@
         }
 
         .form-row {
-            flex-direction: column;
+            grid-template-columns: 1fr;
         }
 
-        .payment-methods {
-            grid-template-columns: 1fr;
+        .quote-content {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .coord-inputs {
+            flex-direction: column;
         }
     }
 </style>
+
 {% endblock %}

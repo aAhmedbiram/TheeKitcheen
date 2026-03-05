@@ -48,7 +48,7 @@ def seed_menu():
                 "description_en": "Oven-baked okra casserole with tender meat.",
                 "price": 400,
                 "is_available": True,
-                "image_urls": "",
+                "image_urls": "/static/menu/bamia.jpeg",
                 "category": "main"
             },
             {

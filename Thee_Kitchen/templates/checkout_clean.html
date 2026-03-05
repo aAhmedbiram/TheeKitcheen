@@ -1,0 +1,514 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="checkout-container">
+    <h1 class="checkout-title">{{ t.checkout if t.checkout is defined else 'Checkout' }}</h1>
+
+    <div class="checkout-content">
+        <!-- Order Summary -->
+        <div class="order-summary">
+            <h2>{{ t.order_summary if t.order_summary is defined else 'Order Summary' }}</h2>
+            <div class="cart-items-checkout">
+                {% for item in cart %}
+                <div class="checkout-item">
+                    <div class="item-info">
+                        <h4>{{ item.name }}</h4>
+                        <p>{{ item.price }} {{ t.egp if t.egp is defined else 'EGP' }} x {{ item.quantity }}</p>
+                    </div>
+                    <div class="item-total">
+                        <span>{{ (item.price * item.quantity) }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="summary-totals">
+                <div class="summary-row">
+                    <span>{{ t.subtotal if t.subtotal is defined else 'Subtotal' }}:</span>
+                    <span id="subtotal">{{ subtotal }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+
+                {% if discount_applied %}
+                <div class="summary-row discount">
+                    <span>{{ t.discount if t.discount is defined else 'Discount (10%)' }}:</span>
+                    <span id="discount">-{{ discount_amount }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+                {% endif %}
+
+                <div class="summary-row total">
+                    <span>{{ t.total if t.total is defined else 'Total' }}:</span>
+                    <span id="final-total">{{ final_total }} {{ t.egp if t.egp is defined else 'EGP' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Information & Delivery -->
+        <div class="customer-info">
+            <h2>{{ t.customer_info if t.customer_info is defined else 'Customer Information' }}</h2>
+
+            <form id="checkoutForm" class="checkout-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">{{ t.full_name if t.full_name is defined else 'Full Name' }}</label>
+                        <input type="text" id="name" name="name" required {% if user_info and user_info.name
+                            %}value="{{ user_info.name }}" {% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">{{ t.phone if t.phone is defined else 'Phone' }}</label>
+                        <input type="tel" id="phone" name="phone" required {% if user_info and user_info.phone
+                            %}value="{{ user_info.phone }}" {% endif %}>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address_text">{{ t.address_details if t.address_details is defined else 'Address
+                            Details' }}</label>
+                        <textarea id="address_text" name="address_text" rows="3" required
+                            placeholder="{{ t.address_placeholder if t.address_placeholder is defined else 'Enter your full delivery address' }}"
+                            {% if user_info and user_info.address %}{{ user_info.address }}{% endif %}></textarea>
+                    </div>
+                </div>
+
+                <!-- Location Options -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ t.delivery_options if t.delivery_options is defined else 'Delivery Location'
+                            }}</label>
+                        <div class="location-options">
+                            <button type="button" class="location-btn" onclick="getCurrentLocation()">
+                                <span class="location-icon">📍</span>
+                                <span class="location-text">{{ t.use_my_location if t.use_my_location is defined else
+                                    'Use My Location' }}</span>
+                            </button>
+
+                            <div class="manual-location">
+                                <small>or enter coordinates manually:</small>
+                                <div class="coord-inputs">
+                                    <input type="number" id="manual-lat" placeholder="Latitude" step="any"
+                                        onchange="updateLocationFromManual()">
+                                    <input type="number" id="manual-lng" placeholder="Longitude" step="any"
+                                        onchange="updateLocationFromManual()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Quote Display -->
+                <div id="delivery-quote" class="delivery-quote" style="display: none;">
+                    <div class="quote-content">
+                        <div class="quote-item">
+                            <span>{{ t.delivery_distance_label if t.delivery_distance_label is defined else 'Distance'
+                                }}:</span>
+                            <span id="delivery-distance">--</span>
+                        </div>
+                        <div class="quote-item">
+                            <span>{{ t.delivery_fee_label if t.delivery_fee_label is defined else 'Delivery Fee'
+                                }}:</span>
+                            <span id="delivery-fee">--</span>
+                        </div>
+                    </div>
+                    <div id="delivery-error" class="delivery-error" style="display: none;"></div>
+                </div>
+
+                <!-- Hidden fields for coordinates -->
+                <input type="hidden" id="lat" name="lat" value="">
+                <input type="hidden" id="lng" name="lng" value="">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="notes">{{ t.order_notes if t.order_notes is defined else 'Order Notes (Optional)'
+                            }}</label>
+                        <textarea id="notes" name="notes" rows="2"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Payment Options -->
+        <div class="payment-section">
+            <h2>{{ t.payment_method if t.payment_method is defined else 'Payment Method' }}</h2>
+
+            <!-- Discount Option -->
+            <div class="discount-option">
+                <label class="discount-label">
+                    <input type="checkbox" id="applyDiscount" onchange="toggleDiscount()">
+                    {{ t.apply_10_discount if t.apply_10_discount is defined else 'Apply 10% Discount' }}
+                </label>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <div class="payment-option">
+                    <input type="radio" id="cash" name="payment_method" value="cash" checked>
+                    <label for="cash" class="payment-label">
+                        <span class="payment-icon">💵</span>
+                        <span class="payment-text">{{ t.cash_on_delivery if t.cash_on_delivery is defined else 'Cash on
+                            Delivery' }}</span>
+                    </label>
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" id="card" name="payment_method" value="card">
+                    <label for="card" class="payment-label">
+                        <span class="payment-icon">💳</span>
+                        <span class="payment-text">{{ t.credit_card if t.credit_card is defined else 'Credit Card'
+                            }}</span>
+                    </label>
+                </div>
+
+                <div class="payment-option">
+                    <input type="radio" id="wallet" name="payment_method" value="wallet">
+                    <label for="wallet" class="payment-label">
+                        <span class="payment-icon">📱</span>
+                        <span class="payment-text">{{ t.digital_wallet if t.digital_wallet is defined else 'Digital
+                            Wallet' }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Place Order Button -->
+        <div class="place-order-section">
+            <button type="submit" form="checkoutForm" class="place-order-btn" onclick="placeOrder(event)">
+                <span class="btn-icon">🛒</span>
+                <span class="btn-text">{{ t.place_order if t.place_order is defined else 'Place Order' }}</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Login/Register Modal -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>{{ t.login_required if t.login_required is defined else 'Login Required' }}</h3>
+            <button class="close-modal" onclick="closeAuthModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>{{ t.login_to_continue if t.login_to_continue is defined else 'Please login or register to continue with
+                checkout' }}</p>
+            <div class="auth-options">
+                <a href="{{ url_for('login', next=url_for('checkout')) }}" class="auth-btn login-btn">
+                    {{ t.login if t.login is defined else 'Login' }}
+                </a>
+                <a href="{{ url_for('signup', next=url_for('checkout')) }}" class="auth-btn register-btn">
+                    {{ t.register if t.register is defined else 'Register' }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set global variable for authentication status
+    {% if is_logged_in %}
+    window.isUserLoggedIn = true;
+    {% else %}
+    window.isUserLoggedIn = false;
+    {% endif %}
+
+    let cart = [];
+    let discountApplied = false;
+    const DISCOUNT_RATE = 0.10; // 10% discount
+
+    // Load cart from server
+    function loadCartForCheckout() {
+        fetch('/get_cart')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cart = data.cart || [];
+                    updateOrderSummary();
+                }
+            })
+            .catch(error => {
+                console.error('Error loading cart:', error);
+            });
+    }
+
+    // Update order summary display
+    function updateOrderSummary() {
+        const cartItemsContainer = document.querySelector('.cart-items-checkout');
+        const subtotalElement = document.getElementById('subtotal');
+        const discountElement = document.getElementById('discount');
+        const totalElement = document.getElementById('final-total');
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="empty-message">{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}</p>';
+            subtotalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            if (discountElement) discountElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            totalElement.textContent = '0 {{ t.egp if t.egp is defined else "EGP" }}';
+            return;
+        }
+
+        let subtotal = 0;
+        cartItemsContainer.innerHTML = cart.map(item => {
+            const itemTotal = item.price * item.quantity;
+            subtotal += itemTotal;
+
+            return `<div class="checkout-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.price} {{ t.egp if t.egp is defined else "EGP" }} x ${item.quantity}</p>
+                        </div>
+                        <div class="item-total">
+                            <span>${itemTotal} {{ t.egp if t.egp is defined else "EGP" }}</span>
+                        </div>
+                    </div>`;
+        }).join('');
+
+        const discountAmount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+        const finalTotal = subtotal - discountAmount;
+
+        subtotalElement.textContent = `${subtotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        if (discountElement) {
+            discountElement.textContent = `-${discountAmount.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        }
+        totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+    }
+
+    // Toggle discount
+    function toggleDiscount() {
+        discountApplied = document.getElementById('applyDiscount').checked;
+        updateOrderSummary();
+    }
+
+    // Check if user is logged in
+    function checkAuth() {
+        return window.isUserLoggedIn || false;
+    }
+
+    // Show authentication modal
+    function showAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+    }
+
+    // Close authentication modal
+    function closeAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+    }
+
+    // Place order
+    function placeOrder(event) {
+        event.preventDefault(); // Prevent form submission
+
+        if (cart.length === 0) {
+            alert('{{ t.empty_cart_checkout if t.empty_cart_checkout is defined else "Your cart is empty!" }}');
+            return;
+        }
+
+        // Check if user is authenticated
+        if (!checkAuth()) {
+            showAuthModal();
+            return;
+        }
+
+        // Get form data
+        const form = document.getElementById('checkoutForm');
+        const formData = new FormData(form);
+
+        const orderData = {
+            items: cart,
+            customer: {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                address: formData.get('address_text'),
+                lat: formData.get('lat'),
+                lng: formData.get('lng'),
+                notes: formData.get('notes')
+            },
+            payment: {
+                method: document.querySelector('input[name="payment_method"]:checked').value,
+                discount_applied: discountApplied,
+                discount_rate: discountApplied ? DISCOUNT_RATE : 0
+            },
+            totals: {
+                subtotal: calculateSubtotal(),
+                discount: discountApplied ? calculateSubtotal() * DISCOUNT_RATE : 0,
+                final_total: calculateFinalTotal()
+            }
+        };
+
+        // Send order to server
+        fetch('/place_order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(orderData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('{{ t.order_placed if t.order_placed is defined else "Order placed successfully!" }}');
+                    // Clear cart and redirect
+                    cart = [];
+                    window.location.href = '{{ url_for("menu") }}';
+                } else {
+                    alert(data.message || '{{ t.order_error if t.order_error is defined else "Error placing order" }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                alert('{{ t.order_error if t.order_error is defined else "Error placing order" }}');
+            });
+    }
+
+    // Calculate totals
+    function calculateSubtotal() {
+        return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+
+    function calculateFinalTotal() {
+        const subtotal = calculateSubtotal();
+        const discount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+        return subtotal - discount;
+    }
+
+    // Get current location using browser geolocation
+    function getCurrentLocation() {
+        if (navigator.geolocation) {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+
+                    // Update hidden fields
+                    document.getElementById('lat').value = lat;
+                    document.getElementById('lng').value = lng;
+
+                    // Update manual inputs
+                    document.getElementById('manual-lat').value = lat;
+                    document.getElementById('manual-lng').value = lng;
+
+                    // Get delivery quote
+                    getDeliveryQuote(lat, lng);
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    showDeliveryError('{{ t.location_permission_denied if t.location_permission_denied is defined else 'Location permission denied' }}');
+                },
+                options
+            );
+        } else {
+            showDeliveryError('Geolocation is not supported by your browser');
+        }
+    }
+
+    // Update location from manual input
+    function updateLocationFromManual() {
+        const lat = parseFloat(document.getElementById('manual-lat').value);
+        const lng = parseFloat(document.getElementById('manual-lng').value);
+
+        if (!isNaN(lat) && !isNaN(lng)) {
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+            getDeliveryQuote(lat, lng);
+        }
+    }
+
+    // Get delivery quote from API
+    function getDeliveryQuote(lat, lng) {
+        const quoteDiv = document.getElementById('delivery-quote');
+        const errorDiv = document.getElementById('delivery-error');
+        const distanceSpan = document.getElementById('delivery-distance');
+        const feeSpan = document.getElementById('delivery-fee');
+
+        // Show loading state
+        quoteDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        distanceSpan.textContent = '{{ t.calculating_delivery if t.calculating_delivery is defined else 'Calculating...' }}';
+        feeSpan.textContent = '--';
+
+        // Call API
+        fetch('/api/delivery/quote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lat: lat,
+                lng: lng
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    if (data.out_of_range) {
+                        distanceSpan.textContent = data.distance_km + ' km';
+                        feeSpan.textContent = '--';
+                        showDeliveryError('{{ t.delivery_out_of_range if t.delivery_out_of_range is defined else 'Out of delivery range' }}');
+                        disableOrderButton(true);
+                    } else {
+                        distanceSpan.textContent = data.distance_km + ' km';
+                        feeSpan.textContent = data.delivery_fee + ' {{ t.egp if t.egp is defined else "EGP" }}';
+                        errorDiv.style.display = 'none';
+                        disableOrderButton(false);
+                        updateTotalsWithDelivery(data.delivery_fee);
+                    }
+                } else {
+                    showDeliveryError(data.error || '{{ t.delivery_api_error_try_again if t.delivery_api_error_try_again is defined else 'Error calculating delivery' }}');
+                    disableOrderButton(true);
+                }
+            })
+            .catch(error => {
+                console.error('Delivery quote error:', error);
+                showDeliveryError('{{ t.delivery_api_error_try_again if t.delivery_api_error_try_again is defined else 'Error calculating delivery' }}');
+                disableOrderButton(true);
+            });
+    }
+
+    // Show delivery error
+    function showDeliveryError(message) {
+        const errorDiv = document.getElementById('delivery-error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    // Disable/enable order button
+    function disableOrderButton(disable) {
+        const orderBtn = document.querySelector('.place-order-btn');
+        if (orderBtn) {
+            orderBtn.disabled = disable;
+            if (disable) {
+                orderBtn.style.opacity = '0.5';
+                orderBtn.style.cursor = 'not-allowed';
+            } else {
+                orderBtn.style.opacity = '1';
+                orderBtn.style.cursor = 'pointer';
+            }
+        }
+    }
+
+    // Update totals with delivery fee
+    function updateTotalsWithDelivery(deliveryFee) {
+        const subtotalElement = document.getElementById('subtotal');
+        const totalElement = document.getElementById('final-total');
+        const discountElement = document.getElementById('discount');
+
+        if (subtotalElement && totalElement) {
+            const subtotalText = subtotalElement.textContent;
+            const subtotal = parseFloat(subtotalText.replace(/[^\d.-]/g, ''));
+
+            const discountAmount = discountApplied ? subtotal * DISCOUNT_RATE : 0;
+            const finalTotal = subtotal + deliveryFee - discountAmount;
+
+            totalElement.textContent = `${finalTotal.toFixed(2)} {{ t.egp if t.egp is defined else "EGP" }}`;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        loadCartForCheckout();
+    });
+</script>
+
+{% endblock %}

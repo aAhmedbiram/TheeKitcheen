@@ -1,34 +1,367 @@
 {% extends "base.html" %}
 {% block content %}
+<!-- Enhanced Hero Section -->
 <section class="hero-section">
-    <div class="hero-content glass-card">
-        <h2 class="hero-title">{{ t.hero_title | safe }}</h2>
-        <p class="hero-subtitle">{{ t.hero_subtitle }}</p>
+    <div class="hero-content glass-card slide-up">
+        <h2 class="hero-title">{{ t.hero_title | safe if t.hero_title is defined else 'Welcome to Thee Kitchen' }}</h2>
+        <p class="hero-subtitle">{{ t.hero_subtitle if t.hero_subtitle is defined else 'Experience authentic Egyptian
+            cuisine delivered fast to your doorstep' }}</p>
 
-        <!-- Language Toggle Button -->
+        <!-- Enhanced Language Toggle Button -->
         <div class="language-toggle-center">
-            <a href="{{ url_for('toggle_language') }}" class="language-toggle-btn">
+            <a href="{{ url_for('toggle_language') }}" class="language-toggle-btn pulse">
                 {% if current_lang == 'en' %}
-                🇸🇦 {{ t.arabic }}
+                🇸🇦 {{ t.arabic if t.arabic is defined else 'العربية' }}
                 {% else %}
-                🇬🇧 {{ t.english }}
+                🇬🇧 {{ t.english if t.english is defined else 'English' }}
                 {% endif %}
             </a>
         </div>
 
         <div class="hero-actions">
-            <a href="{{ url_for('menu') }}" class="btn-primary btn-lg">{{ t.hero_cta_primary }}</a>
+            <a href="{{ url_for('menu') }}" class="btn-primary btn-lg">{{ t.hero_cta_primary if t.hero_cta_primary is
+                defined else 'View Menu' }}</a>
             {% if not is_logged_in %}
-            <a href="{{ url_for('signup') }}" class="btn-outline btn-lg">{{ t.hero_cta_secondary }}</a>
+            <a href="{{ url_for('signup') }}" class="btn-outline btn-lg">{{ t.hero_cta_secondary if t.hero_cta_secondary
+                is defined else 'Sign Up' }}</a>
             {% endif %}
         </div>
 
         <div class="hero-highlights">
-            <div class="highlight"><span class="highlight-icon">🏠</span><span class="highlight-text">{{
-                    t.hero_highlight_home }}</span></div>
-            <div class="highlight"><span class="highlight-icon">⚡</span><span class="highlight-text">{{
-                    t.hero_highlight_fast }}</span></div>
+            <div class="highlight fade-in">
+                <span class="highlight-icon">🏠</span>
+                <span class="highlight-text">{{ t.hero_highlight_home if t.hero_highlight_home is defined else 'Home
+                    Delivery' }}</span>
+            </div>
+            <div class="highlight fade-in" style="animation-delay: 0.2s">
+                <span class="highlight-icon">⚡</span>
+                <span class="highlight-text">{{ t.hero_highlight_fast if t.hero_highlight_fast is defined else 'Fast
+                    Service' }}</span>
+            </div>
+            <div class="highlight fade-in" style="animation-delay: 0.4s">
+                <span class="highlight-icon">👨‍🍳</span>
+                <span class="highlight-text">{{ t.hero_highlight_chefs if t.hero_highlight_chefs is defined else 'Expert
+                    Chefs' }}</span>
+            </div>
         </div>
     </div>
 </section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title text-center fade-in">{{ t.why_choose_us if t.why_choose_us is defined else 'Why Choose
+            Thee Kitchen' }}</h2>
+        <div class="features-grid">
+            <div class="feature-card glass-card slide-up" style="animation-delay: 0.1s">
+                <div class="feature-icon">🚀</div>
+                <h3>{{ t.fast_delivery if t.fast_delivery is defined else 'Fast Delivery' }}</h3>
+                <p>{{ t.fast_delivery_desc if t.fast_delivery_desc is defined else 'Get your food delivered in 30
+                    minutes or less' }}</p>
+            </div>
+            <div class="feature-card glass-card slide-up" style="animation-delay: 0.2s">
+                <div class="feature-icon">👨‍🍳</div>
+                <h3>{{ t.expert_chefs if t.expert_chefs is defined else 'Expert Chefs' }}</h3>
+                <p>{{ t.expert_chefs_desc if t.expert_chefs_desc is defined else 'Prepared by experienced culinary
+                    professionals' }}</p>
+            </div>
+            <div class="feature-card glass-card slide-up" style="animation-delay: 0.3s">
+                <div class="feature-icon">💯</div>
+                <h3>{{ t.quality_guaranteed if t.quality_guaranteed is defined else 'Quality Guaranteed' }}</h3>
+                <p>{{ t.quality_guaranteed_desc if t.quality_guaranteed_desc is defined else 'Fresh ingredients and
+                    authentic recipes' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Dishes Section -->
+<section class="popular-dishes-section">
+    <div class="container">
+        <h2 class="section-title text-center fade-in">{{ t.popular_dishes if t.popular_dishes is defined else 'Popular
+            Dishes' }}</h2>
+        <div class="dishes-grid">
+            <div class="dish-card glass-card slide-up" style="animation-delay: 0.1s">
+                <div class="dish-image">
+                    <span class="dish-emoji">🍗</span>
+                </div>
+                <div class="dish-info">
+                    <h3>{{ t.grilled_chicken if t.grilled_chicken is defined else 'Grilled Chicken' }}</h3>
+                    <p>{{ t.chicken_desc if t.chicken_desc is defined else 'Marinated and grilled to perfection' }}</p>
+                    <div class="dish-price">120 EGP</div>
+                </div>
+            </div>
+            <div class="dish-card glass-card slide-up" style="animation-delay: 0.2s">
+                <div class="dish-image">
+                    <span class="dish-emoji">🍖</span>
+                </div>
+                <div class="dish-info">
+                    <h3>{{ t.mixed_grill if t.mixed_grill is defined else 'Mixed Grill' }}</h3>
+                    <p>{{ t.grill_desc if t.grill_desc is defined else 'Assorted grilled meats and vegetables' }}</p>
+                    <div class="dish-price">180 EGP</div>
+                </div>
+            </div>
+            <div class="dish-card glass-card slide-up" style="animation-delay: 0.3s">
+                <div class="dish-image">
+                    <span class="dish-emoji">🥗</span>
+                </div>
+                <div class="dish-info">
+                    <h3>{{ t.fresh_salad if t.fresh_salad is defined else 'Fresh Salad' }}</h3>
+                    <p>{{ t.salad_desc if t.salad_desc is defined else 'Mixed greens with special dressing' }}</p>
+                    <div class="dish-price">45 EGP</div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-6">
+            <a href="{{ url_for('menu') }}" class="btn-primary">{{ t.view_full_menu if t.view_full_menu is defined else
+                'View Full Menu' }} →</a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section">
+    <div class="container">
+        <h2 class="section-title text-center fade-in">{{ t.how_it_works if t.how_it_works is defined else 'How It Works'
+            }}</h2>
+        <div class="steps-grid">
+            <div class="step-card slide-up" style="animation-delay: 0.1s">
+                <div class="step-number">1</div>
+                <h3>{{ t.browse_menu if t.browse_menu is defined else 'Browse Menu' }}</h3>
+                <p>{{ t.browse_menu_desc if t.browse_menu_desc is defined else 'Explore our delicious dishes' }}</p>
+            </div>
+            <div class="step-card slide-up" style="animation-delay: 0.2s">
+                <div class="step-number">2</div>
+                <h3>{{ t.place_order if t.place_order is defined else 'Place Order' }}</h3>
+                <p>{{ t.place_order_desc if t.place_order_desc is defined else 'Add items to cart and checkout' }}</p>
+            </div>
+            <div class="step-card slide-up" style="animation-delay: 0.3s">
+                <div class="step-number">3</div>
+                <h3>{{ t.enjoy_food if t.enjoy_food is defined else 'Enjoy Food' }}</h3>
+                <p>{{ t.enjoy_food_desc if t.enjoy_food_desc is defined else 'Delicious food delivered to your door' }}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced CSS -->
+<style>
+    /* Hero Section Enhancements */
+    .hero-content {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .language-toggle-center {
+        margin: var(--spacing-6) 0;
+    }
+
+    .language-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        padding: var(--spacing-3) var(--spacing-4);
+        background: linear-gradient(135deg, var(--primary-400), var(--primary-300));
+        color: #fff;
+        text-decoration: none;
+        border-radius: var(--radius-2xl);
+        font-weight: 600;
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-md);
+    }
+
+    .language-toggle-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+    }
+
+    .hero-highlights {
+        display: flex;
+        justify-content: center;
+        gap: var(--spacing-6);
+        margin-top: var(--spacing-6);
+        flex-wrap: wrap;
+    }
+
+    .highlight {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-2);
+        opacity: 0.9;
+        font-size: var(--font-size-sm);
+    }
+
+    .highlight-icon {
+        font-size: var(--font-size-xl);
+    }
+
+    /* Features Section */
+    .features-section {
+        padding: var(--spacing-16) 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-4);
+    }
+
+    .section-title {
+        font-size: var(--font-size-3xl);
+        font-weight: 700;
+        margin-bottom: var(--spacing-8);
+        background: linear-gradient(135deg, var(--primary-400), var(--primary-300));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--spacing-6);
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: var(--spacing-8);
+    }
+
+    .feature-icon {
+        font-size: 4rem;
+        margin-bottom: var(--spacing-4);
+    }
+
+    .feature-card h3 {
+        font-size: var(--font-size-xl);
+        margin-bottom: var(--spacing-3);
+        color: var(--primary-400);
+    }
+
+    .feature-card p {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+    }
+
+    /* Popular Dishes Section */
+    .popular-dishes-section {
+        padding: var(--spacing-16) 0;
+    }
+
+    .dishes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: var(--spacing-6);
+        margin-bottom: var(--spacing-8);
+    }
+
+    .dish-card {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-4);
+        padding: var(--spacing-6);
+    }
+
+    .dish-image {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-400), var(--primary-300));
+        border-radius: var(--radius-xl);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .dish-emoji {
+        font-size: 2rem;
+    }
+
+    .dish-info {
+        flex: 1;
+    }
+
+    .dish-info h3 {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--spacing-2);
+        color: #fff;
+    }
+
+    .dish-info p {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: var(--font-size-sm);
+        margin-bottom: var(--spacing-3);
+    }
+
+    .dish-price {
+        font-size: var(--font-size-xl);
+        font-weight: 700;
+        color: var(--primary-400);
+    }
+
+    /* How It Works Section */
+    .how-it-works-section {
+        padding: var(--spacing-16) 0;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--spacing-6);
+    }
+
+    .step-card {
+        text-align: center;
+        padding: var(--spacing-6);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-xl);
+        backdrop-filter: blur(10px);
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-400), var(--primary-300));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        color: #fff;
+        margin: 0 auto var(--spacing-4);
+    }
+
+    .step-card h3 {
+        font-size: var(--font-size-lg);
+        margin-bottom: var(--spacing-3);
+        color: #fff;
+    }
+
+    .step-card p {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .hero-highlights {
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-4);
+        }
+
+        .dishes-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .dish-image {
+            margin: 0 auto;
+        }
+    }
+</style>
 {% endblock %}

@@ -1,0 +1,176 @@
+{% extends "modern_base.html" %}
+{% block content %}
+
+<!-- Modern Login Page -->
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto">
+        <!-- Login Card -->
+        <div class="glass-effect rounded-2xl p-8 animate-bounce-in">
+            <!-- Logo and Title -->
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">🍽️</span>
+                </div>
+                <h1 class="text-3xl font-bold text-gradient mb-2">Welcome Back</h1>
+                <p class="text-white/70">Sign in to your account to continue</p>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                class="mb-6 p-4 rounded-lg {% if category == 'error' %}bg-red-500/20 border border-red-500/50 text-red-300{% else %}bg-primary-500/20 border border-primary-500/50 text-primary-300{% endif %}">
+                {{ message|safe }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" class="space-y-6">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <!-- Email Field -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white/80 mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-white/50">📧</span>
+                        </div>
+                        <input type="email" id="email" name="email" required
+                            class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-primary-500 focus:bg-white/15 transition-colors"
+                            placeholder="your.email@example.com">
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-white/80 mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-white/50">🔒</span>
+                        </div>
+                        <input type="password" id="password" name="password" required
+                            class="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:border-primary-500 focus:bg-white/15 transition-colors"
+                            placeholder="Enter your password">
+                        <button type="button" onclick="togglePassword('password')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <span class="text-white/50 hover:text-white cursor-pointer" id="password-toggle">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="remember" class="mr-2 rounded">
+                        <span class="text-sm text-white/70">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-primary-400 hover:text-primary-300 transition-colors">Forgot
+                        password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit"
+                    class="w-full py-3 gradient-primary text-white font-semibold rounded-lg hover-lift transition-all duration-300">
+                    🚀 Sign In
+                </button>
+            </form>
+
+            <!-- Social Login -->
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-white/20"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-transparent text-white/50">Or continue with</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button
+                        class="flex items-center justify-center px-4 py-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="mr-2">📱</span>
+                        <span class="text-sm">WhatsApp</span>
+                    </button>
+                    <button
+                        class="flex items-center justify-center px-4 py-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="mr-2">🌐</span>
+                        <span class="text-sm">Google</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sign Up Link -->
+            <div class="mt-8 text-center">
+                <p class="text-white/70">
+                    Don't have an account?
+                    <a href="{{ url_for('signup') }}"
+                        class="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+                        Sign up here
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="mt-8 grid grid-cols-3 gap-4">
+            <div class="text-center">
+                <div class="w-12 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">🚀</span>
+                </div>
+                <p class="text-xs text-white/60">Fast Delivery</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">💳</span>
+                </div>
+                <p class="text-xs text-white/60">Secure Payment</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <span class="text-xl">🎯</span>
+                </div>
+                <p class="text-xs text-white/60">Best Quality</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const toggle = document.getElementById(fieldId + '-toggle');
+
+        if (field.type === 'password') {
+            field.type = 'text';
+            toggle.textContent = '🙈';
+        } else {
+            field.type = 'password';
+            toggle.textContent = '👁️';
+        }
+    }
+
+    // Add form validation
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (!email || !password) {
+            e.preventDefault();
+            alert('Please fill in all fields');
+            return false;
+        }
+
+        if (password.length < 6) {
+            e.preventDefault();
+            alert('Password must be at least 6 characters long');
+            return false;
+        }
+    });
+</script>
+
+{% endblock %}

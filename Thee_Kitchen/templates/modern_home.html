@@ -1,0 +1,334 @@
+{% extends "modern_base.html" %}
+{% block content %}
+
+<!-- Hero Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center max-w-4xl mx-auto animate-fade-in">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 text-gradient">
+            {{ t.welcome_to_thee_kitchen if t.welcome_to_thee_kitchen is defined else 'Welcome to Thee Kitchen' }}
+        </h1>
+        <p class="text-xl md:text-2xl text-white/80 mb-8 leading-relaxed">
+            {{ t.hero_description if t.hero_description is defined else 'Experience authentic Egyptian cuisine with our
+            modern food delivery service. Fresh ingredients, traditional recipes, delivered to your doorstep.' }}
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            {% if is_logged_in %}
+            <a href="{{ url_for('menu') }}"
+                class="px-8 py-4 gradient-primary text-white font-semibold rounded-lg hover-lift inline-flex items-center justify-center">
+                <span class="mr-2">🍽️</span> {{ t.view_menu if t.view_menu is defined else 'View Menu' }}
+            </a>
+            {% else %}
+            <a href="{{ url_for('menu') }}"
+                class="px-8 py-4 gradient-primary text-white font-semibold rounded-lg hover-lift inline-flex items-center justify-center">
+                <span class="mr-2">🍽️</span> {{ t.view_menu if t.view_menu is defined else 'View Menu' }}
+            </a>
+            <a href="{{ url_for('signup') }}"
+                class="px-8 py-4 glass-effect text-white font-semibold rounded-lg hover:bg-white/20 transition-colors inline-flex items-center justify-center">
+                <span class="mr-2">👤</span> {{ t.sign_up if t.sign_up is defined else 'Sign Up' }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gradient">{{ t.why_choose_us if t.why_choose_us is defined
+            else 'Why Choose Thee Kitchen' }}</h2>
+        <p class="text-white/70 max-w-2xl mx-auto">{{ t.features_description if t.features_description is defined else
+            'We deliver more than just food - we deliver experiences' }}</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-effect rounded-xl p-6 text-center hover-lift animate-slide-up" style="animation-delay: 0.1s">
+            <div class="text-5xl mb-4">🚀</div>
+            <h3 class="text-xl font-semibold mb-2">{{ t.fast_delivery if t.fast_delivery is defined else 'Fast Delivery'
+                }}</h3>
+            <p class="text-white/70">{{ t.fast_delivery_desc if t.fast_delivery_desc is defined else 'Get your food
+                delivered in 30 minutes or less' }}</p>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 text-center hover-lift animate-slide-up" style="animation-delay: 0.2s">
+            <div class="text-5xl mb-4">👨‍🍳</div>
+            <h3 class="text-xl font-semibold mb-2">{{ t.expert_chefs if t.expert_chefs is defined else 'Expert Chefs' }}
+            </h3>
+            <p class="text-white/70">{{ t.expert_chefs_desc if t.expert_chefs_desc is defined else 'Prepared by
+                experienced culinary professionals' }}</p>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 text-center hover-lift animate-slide-up" style="animation-delay: 0.3s">
+            <div class="text-5xl mb-4">💯</div>
+            <h3 class="text-xl font-semibold mb-2">{{ t.quality_guaranteed if t.quality_guaranteed is defined else
+                'Quality Guaranteed' }}</h3>
+            <p class="text-white/70">{{ t.quality_guaranteed_desc if t.quality_guaranteed_desc is defined else 'Fresh
+                ingredients and authentic recipes' }}</p>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 text-center hover-lift animate-slide-up" style="animation-delay: 0.4s">
+            <div class="text-5xl mb-4">🎯</div>
+            <h3 class="text-xl font-semibold mb-2">{{ t.customer_service if t.customer_service is defined else '24/7
+                Support' }}</h3>
+            <p class="text-white/70">{{ t.customer_service_desc if t.customer_service_desc is defined else 'Always here
+                to help with your orders' }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Dishes Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gradient">{{ t.popular_dishes if t.popular_dishes is defined
+            else 'Popular Dishes' }}</h2>
+        <p class="text-white/70 max-w-2xl mx-auto">{{ t.popular_dishes_desc if t.popular_dishes_desc is defined else
+            'Try our most loved dishes' }}</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- These would typically come from your backend -->
+        <div class="glass-effect rounded-xl overflow-hidden hover-lift animate-slide-up" style="animation-delay: 0.1s">
+            <div class="h-48 bg-gradient-to-br from-primary-400/20 to-primary-600/20 flex items-center justify-center">
+                <span class="text-6xl">🍗</span>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-lg mb-2">{{ t.grilled_chicken if t.grilled_chicken is defined else
+                    'Grilled Chicken' }}</h3>
+                <p class="text-white/70 text-sm mb-3">{{ t.chicken_desc if t.chicken_desc is defined else 'Marinated and
+                    grilled to perfection' }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-primary-400 font-bold">120 EGP</span>
+                    <button
+                        class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                        {{ t.add_to_cart if t.add_to_cart is defined else 'Add to Cart' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl overflow-hidden hover-lift animate-slide-up" style="animation-delay: 0.2s">
+            <div class="h-48 bg-gradient-to-br from-orange-400/20 to-red-600/20 flex items-center justify-center">
+                <span class="text-6xl">🍖</span>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-lg mb-2">{{ t.mixed_grill if t.mixed_grill is defined else 'Mixed Grill'
+                    }}</h3>
+                <p class="text-white/70 text-sm mb-3">{{ t.grill_desc if t.grill_desc is defined else 'Assorted grilled
+                    meats and vegetables' }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-primary-400 font-bold">180 EGP</span>
+                    <button
+                        class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                        {{ t.add_to_cart if t.add_to_cart is defined else 'Add to Cart' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl overflow-hidden hover-lift animate-slide-up" style="animation-delay: 0.3s">
+            <div class="h-48 bg-gradient-to-br from-green-400/20 to-green-600/20 flex items-center justify-center">
+                <span class="text-6xl">🥗</span>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-lg mb-2">{{ t.fresh_salad if t.fresh_salad is defined else 'Fresh Salad'
+                    }}</h3>
+                <p class="text-white/70 text-sm mb-3">{{ t.salad_desc if t.salad_desc is defined else 'Mixed greens with
+                    special dressing' }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-primary-400 font-bold">45 EGP</span>
+                    <button
+                        class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                        {{ t.add_to_cart if t.add_to_cart is defined else 'Add to Cart' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl overflow-hidden hover-lift animate-slide-up" style="animation-delay: 0.4s">
+            <div class="h-48 bg-gradient-to-br from-yellow-400/20 to-orange-600/20 flex items-center justify-center">
+                <span class="text-6xl">🍛</span>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-lg mb-2">{{ t.rice_pilaf if t.rice_pilaf is defined else 'Rice Pilaf' }}
+                </h3>
+                <p class="text-white/70 text-sm mb-3">{{ t.rice_desc if t.rice_desc is defined else 'Fragrant basmati
+                    rice with spices' }}</p>
+                <div class="flex items-center justify-between">
+                    <span class="text-primary-400 font-bold">35 EGP</span>
+                    <button
+                        class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                        {{ t.add_to_cart if t.add_to_cart is defined else 'Add to Cart' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-8">
+        <a href="{{ url_for('menu') }}"
+            class="px-6 py-3 glass-effect text-white font-semibold rounded-lg hover:bg-white/20 transition-colors inline-flex items-center">
+            {{ t.view_full_menu if t.view_full_menu is defined else 'View Full Menu' }} →
+        </a>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gradient">{{ t.how_it_works if t.how_it_works is defined
+            else 'How It Works' }}</h2>
+        <p class="text-white/70 max-w-2xl mx-auto">{{ t.how_it_works_desc if t.how_it_works_desc is defined else
+            'Ordering your favorite food is easy' }}</p>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-6">
+        <div class="text-center">
+            <div
+                class="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+                1
+            </div>
+            <h3 class="font-semibold text-lg mb-2">{{ t.browse_menu if t.browse_menu is defined else 'Browse Menu' }}
+            </h3>
+            <p class="text-white/70 text-sm">{{ t.browse_menu_desc if t.browse_menu_desc is defined else 'Explore our
+                delicious dishes' }}</p>
+        </div>
+
+        <div class="text-center">
+            <div
+                class="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+                2
+            </div>
+            <h3 class="font-semibold text-lg mb-2">{{ t.place_order if t.place_order is defined else 'Place Order' }}
+            </h3>
+            <p class="text-white/70 text-sm">{{ t.place_order_desc if t.place_order_desc is defined else 'Add items to
+                cart and checkout' }}</p>
+        </div>
+
+        <div class="text-center">
+            <div
+                class="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+                3
+            </div>
+            <h3 class="font-semibold text-lg mb-2">{{ t.track_delivery if t.track_delivery is defined else 'Track
+                Delivery' }}</h3>
+            <p class="text-white/70 text-sm">{{ t.track_delivery_desc if t.track_delivery_desc is defined else 'Monitor
+                your order in real-time' }}</p>
+        </div>
+
+        <div class="text-center">
+            <div
+                class="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+                4
+            </div>
+            <h3 class="font-semibold text-lg mb-2">{{ t.enjoy_food if t.enjoy_food is defined else 'Enjoy Food' }}</h3>
+            <p class="text-white/70 text-sm">{{ t.enjoy_food_desc if t.enjoy_food_desc is defined else 'Delicious food
+                delivered to your door' }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gradient">{{ t.customer_reviews if t.customer_reviews is
+            defined else 'Customer Reviews' }}</h2>
+        <p class="text-white/70 max-w-2xl mx-auto">{{ t.reviews_desc if t.reviews_desc is defined else 'What our
+            customers say about us' }}</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+        <div class="glass-effect rounded-xl p-6 hover-lift">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-xl">👤</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Ahmed M.</h4>
+                    <div class="text-yellow-400">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+            <p class="text-white/80">{{ t.review_1 if t.review_1 is defined else 'Amazing food quality and super fast
+                delivery! The grilled chicken is my favorite.' }}</p>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 hover-lift">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-xl">👤</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Fatima K.</h4>
+                    <div class="text-yellow-400">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+            <p class="text-white/80">{{ t.review_2 if t.review_2 is defined else 'Best Egyptian food delivery service!
+                Always fresh and on time.' }}</p>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 hover-lift">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center mr-3">
+                    <span class="text-xl">👤</span>
+                </div>
+                <div>
+                    <h4 class="font-semibold">Mohamed A.</h4>
+                    <div class="text-yellow-400">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+            <p class="text-white/80">{{ t.review_3 if t.review_3 is defined else 'Great service and authentic taste. The
+                mixed grill is exceptional!' }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="glass-effect rounded-2xl p-8 md:p-12 text-center max-w-4xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gradient">{{ t.ready_to_order if t.ready_to_order is defined
+            else 'Ready to Order?' }}</h2>
+        <p class="text-white/80 mb-8">{{ t.cta_description if t.cta_description is defined else 'Join thousands of
+            satisfied customers and enjoy delicious Egyptian cuisine delivered to your doorstep.' }}</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{{ url_for('menu') }}"
+                class="px-8 py-4 gradient-primary text-white font-semibold rounded-lg hover-lift inline-flex items-center justify-center">
+                <span class="mr-2">🍽️</span> {{ t.order_now if t.order_now is defined else 'Order Now' }}
+            </a>
+            {% if not is_logged_in %}
+            <a href="{{ url_for('signup') }}"
+                class="px-8 py-4 glass-effect text-white font-semibold rounded-lg hover:bg-white/20 transition-colors inline-flex items-center justify-center">
+                <span class="mr-2">👤</span> {{ t.create_account if t.create_account is defined else 'Create Account' }}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript -->
+<script>
+    // Add interactive features
+    document.addEventListener('DOMContentLoaded', function () {
+        // Smooth scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.animate-slide-up').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+            element.style.transition = 'all 0.6s ease-out';
+            observer.observe(element);
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="{{ 'ar' if is_rtl else 'en' }}" {% if is_rtl %}dir="rtl" {% endif %}>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.thee_kitchen if t.thee_kitchen is defined else 'Thee Kitchen' }}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#e8f5e8',
+                            100: '#c3e6c3',
+                            200: '#9dd69d',
+                            300: '#76c576',
+                            400: '#4caf50',
+                            500: '#45a049',
+                            600: '#3d8b40',
+                            700: '#357638',
+                            800: '#2d6130',
+                            900: '#254c28',
+                        },
+                        dark: {
+                            50: '#f8f9fa',
+                            100: '#e9ecef',
+                            200: '#dee2e6',
+                            300: '#ced4da',
+                            400: '#adb5bd',
+                            500: '#6c757d',
+                            600: '#495057',
+                            700: '#343a40',
+                            800: '#212529',
+                            900: '#0a0a0a',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'Segoe UI', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-primary {
+            background: linear-gradient(135deg, #4caf50, #66d66a);
+        }
+
+        .gradient-dark {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #4caf50, #66d66a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-badge {
+            animation: bounce 0.3s ease-in-out;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+    </style>
+</head>
+
+<body class="gradient-dark text-white font-sans antialiased">
+    <!-- Header -->
+    <header class="glass-effect sticky top-0 z-50 border-b border-primary-500/30">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">🍽️</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gradient">Thee Kitchen</h1>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-white/80 hover:text-white transition-colors">Home</a>
+                    <a href="#" class="text-white/80 hover:text-white transition-colors">Menu</a>
+                    <a href="#" class="text-white/80 hover:text-white transition-colors">About</a>
+                    <a href="#" class="text-white/80 hover:text-white transition-colors">Contact</a>
+                </nav>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-4">
+                    <!-- Cart -->
+                    <button class="relative p-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="text-xl">🛒</span>
+                        <span
+                            class="absolute -top-1 -right-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center cart-badge">0</span>
+                    </button>
+
+                    <!-- Language Toggle -->
+                    <button class="p-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="text-xl">🌐</span>
+                    </button>
+
+                    <!-- User Menu -->
+                    <button class="p-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="text-xl">👤</span>
+                    </button>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button class="md:hidden p-2 glass-effect rounded-lg hover:bg-white/20 transition-colors">
+                        <span class="text-xl">☰</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 py-16">
+        <div class="text-center max-w-3xl mx-auto animate-fade-in">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6 text-gradient">
+                Delicious Food Delivered Fast
+            </h2>
+            <p class="text-xl text-white/80 mb-8">
+                Experience the best of Egyptian cuisine with our modern delivery service. Fresh ingredients, authentic
+                flavors, delivered to your doorstep.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="px-8 py-4 gradient-primary text-white font-semibold rounded-lg hover-lift">
+                    🍽️ View Menu
+                </button>
+                <button
+                    class="px-8 py-4 glass-effect text-white font-semibold rounded-lg hover:bg-white/20 transition-colors">
+                    📱 Download App
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="container mx-auto px-4 py-16">
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass-effect rounded-xl p-6 text-center hover-lift">
+                <div class="text-4xl mb-4">🚀</div>
+                <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
+                <p class="text-white/70">Get your food delivered in 30 minutes or less</p>
+            </div>
+            <div class="glass-effect rounded-xl p-6 text-center hover-lift">
+                <div class="text-4xl mb-4">👨‍🍳</div>
+                <h3 class="text-xl font-semibold mb-2">Expert Chefs</h3>
+                <p class="text-white/70">Prepared by experienced culinary professionals</p>
+            </div>
+            <div class="glass-effect rounded-xl p-6 text-center hover-lift">
+                <div class="text-4xl mb-4">💯</div>
+                <h3 class="text-xl font-semibold mb-2">Quality Guaranteed</h3>
+                <p class="text-white/70">Fresh ingredients and authentic recipes</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Preview -->
+    <section class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gradient">Popular Dishes</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Menu Item Card -->
+            <div class="glass-effect rounded-xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                    <span class="text-6xl">🍗</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Grilled Chicken</h3>
+                    <p class="text-white/70 text-sm mb-3">Marinated and grilled to perfection</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-primary-400 font-bold">120 EGP</span>
+                        <button
+                            class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More menu items... -->
+            <div class="glass-effect rounded-xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-br from-orange-400 to-red-600 flex items-center justify-center">
+                    <span class="text-6xl">🍖</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Mixed Grill</h3>
+                    <p class="text-white/70 text-sm mb-3">Assorted grilled meats and vegetables</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-primary-400 font-bold">180 EGP</span>
+                        <button
+                            class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-effect rounded-xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                    <span class="text-6xl">🥗</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Fresh Salad</h3>
+                    <p class="text-white/70 text-sm mb-3">Mixed greens with special dressing</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-primary-400 font-bold">45 EGP</span>
+                        <button
+                            class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-effect rounded-xl overflow-hidden hover-lift">
+                <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-600 flex items-center justify-center">
+                    <span class="text-6xl">🍛</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-lg mb-2">Rice Pilaf</h3>
+                    <p class="text-white/70 text-sm mb-3">Fragrant basmati rice with spices</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-primary-400 font-bold">35 EGP</span>
+                        <button
+                            class="px-3 py-1 bg-primary-500 text-white rounded-lg text-sm hover:bg-primary-600 transition-colors">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-effect border-t border-primary-500/30 mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center">
+                <p class="text-white/60">© 2024 Thee Kitchen. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add interactive features
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cart animation
+            const cartButtons = document.querySelectorAll('button');
+            cartButtons.forEach(button => {
+                if (button.textContent.includes('Add to Cart')) {
+                    button.addEventListener('click', function () {
+                        const badge = document.querySelector('.cart-badge');
+                        const currentCount = parseInt(badge.textContent);
+                        badge.textContent = currentCount + 1;
+                        badge.classList.add('cart-badge');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

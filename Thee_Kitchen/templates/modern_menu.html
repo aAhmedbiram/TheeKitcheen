@@ -1,0 +1,253 @@
+{% extends "modern_base.html" %}
+{% block content %}
+
+<!-- Modern Menu Page -->
+<div class="container mx-auto px-4 py-8">
+    <!-- Menu Header -->
+    <div class="text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">Our Menu</h1>
+        <p class="text-xl text-white/80 max-w-2xl mx-auto">
+            Discover our authentic Egyptian dishes, prepared with love and delivered fresh to your doorstep
+        </p>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="flex flex-wrap justify-center gap-3 mb-12">
+        <a href="{{ url_for('menu', category='all') }}"
+            class="px-6 py-3 rounded-full transition-all duration-300 {% if current_category == 'all' %}gradient-primary text-white{% else %}glass-effect text-white/80 hover:text-white hover:bg-white/20{% endif %}">
+            🍽️ All Categories
+        </a>
+        {% for cat_key, label in category_names.items() %}
+        <a href="{{ url_for('menu', category=cat_key) }}"
+            class="px-6 py-3 rounded-full transition-all duration-300 {% if current_category == cat_key %}gradient-primary text-white{% else %}glass-effect text-white/80 hover:text-white hover:bg-white/20{% endif %}">
+            {{ label.name_ar if current_lang == 'ar' else label.name_en }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Menu Items Grid -->
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% if not has_items %}
+        <div class="col-span-full text-center py-16">
+            <div class="glass-effect rounded-xl p-8 max-w-md mx-auto">
+                <span class="text-6xl mb-4 block">🔍</span>
+                <h3 class="text-xl font-semibold mb-2">No items found</h3>
+                <p class="text-white/70">{{ t.no_items_in_category if t.no_items_in_category is defined else 'No items
+                    found in this category.' }}</p>
+            </div>
+        </div>
+        {% else %}
+        {% for cat_key, label in category_names.items() %}
+        {% set cat_data = categories.get(cat_key) %}
+        {% if cat_data and (current_category == 'all' or current_category == cat_key) and cat_data['items'] %}
+        {% for item in cat_data['items'] %}
+        <!-- Modern Menu Item Card -->
+        <div class="glass-effect rounded-xl overflow-hidden hover-lift animate-slide-up"
+            style="animation-delay: {{ loop.index0 * 0.1 }}s">
+            <!-- Item Image -->
+            <div
+                class="relative h-48 bg-gradient-to-br from-primary-400/20 to-primary-600/20 flex items-center justify-center overflow-hidden">
+                {% if item.image_urls and item.image_urls.strip() %}
+                <img src="{{ item.image_urls }}" alt="{{ item.get_name(current_lang) }}"
+                    class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                {% else %}
+                <span class="text-6xl">{{ item.get_display_image() }}</span>
+                {% endif %}
+
+                <!-- Badge for popular items -->
+                {% if loop.index <= 3 %} <div
+                    class="absolute top-3 right-3 bg-primary-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    ⭐ Popular
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Item Details -->
+        <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+                <div class="flex-1">
+                    <h3 class="font-semibold text-lg mb-1">{{ item.get_name(current_lang) }}</h3>
+                    <p class="text-white/70 text-sm line-clamp-2">{{ item.get_description(current_lang) }}</p>
+                </div>
+            </div>
+
+            <!-- Item Footer -->
+            <div class="flex items-center justify-between pt-3 border-t border-white/10">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl font-bold text-primary-400">{{ item.price }}</span>
+                    <span class="text-white/60 text-sm">EGP</span>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <!-- Quantity Controls -->
+                    <div class="flex items-center space-x-1 bg-white/10 rounded-lg">
+                        <button class="p-1 hover:bg-white/20 rounded transition-colors"
+                            onclick="decreaseQuantity({{ item.id }})">
+                            <span class="text-sm">−</span>
+                        </button>
+                        <span class="px-2 text-sm font-medium" id="quantity-{{ item.id }}">1</span>
+                        <button class="p-1 hover:bg-white/20 rounded transition-colors"
+                            onclick="increaseQuantity({{ item.id }})">
+                            <span class="text-sm">+</span>
+                        </button>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <button
+                        class="px-4 py-2 gradient-primary text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                        data-item-id="{{ item.id }}" data-item-name="{{ item.get_name(current_lang) }}"
+                        data-item-price="{{ item.price }}" onclick="addToCart(this)">
+                        🛒 Add
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
+
+<!-- Cart Summary (Floating) -->
+<div class="fixed bottom-6 right-6 glass-effect rounded-xl p-4 shadow-2xl animate-bounce-in" id="cartSummary">
+    <div class="flex items-center space-x-4">
+        <div class="text-center">
+            <div class="text-2xl font-bold text-primary-400" id="cartTotal">0 EGP</div>
+            <div class="text-xs text-white/60">Total</div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold" id="cartCount">0</div>
+            <div class="text-xs text-white/60">Items</div>
+        </div>
+        <button
+            class="px-4 py-2 gradient-primary text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
+            onclick="goToCheckout()">
+            Checkout →
+        </button>
+    </div>
+</div>
+</div>
+
+<!-- Enhanced JavaScript -->
+<script>
+    // Cart management
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let quantities = {};
+
+    // Initialize quantities
+    function initializeQuantities() {
+        document.querySelectorAll('[id^="quantity-"]').forEach(elem => {
+            const itemId = elem.id.replace('quantity-', '');
+            quantities[itemId] = 1;
+        });
+    }
+
+    // Quantity controls
+    function increaseQuantity(itemId) {
+        quantities[itemId] = (quantities[itemId] || 1) + 1;
+        document.getElementById(`quantity-${itemId}`).textContent = quantities[itemId];
+    }
+
+    function decreaseQuantity(itemId) {
+        if (quantities[itemId] > 1) {
+            quantities[itemId]--;
+            document.getElementById(`quantity-${itemId}`).textContent = quantities[itemId];
+        }
+    }
+
+    // Add to cart with animation
+    function addToCart(button) {
+        const itemId = button.dataset.itemId;
+        const itemName = button.dataset.itemName;
+        const itemPrice = parseFloat(button.dataset.itemPrice);
+        const quantity = quantities[itemId] || 1;
+
+        // Check if item already in cart
+        const existingItem = cart.find(item => item.id === itemId);
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({
+                id: itemId,
+                name: itemName,
+                price: itemPrice,
+                quantity: quantity
+            });
+        }
+
+        // Save to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Update UI
+        updateCartSummary();
+
+        // Visual feedback
+        button.textContent = '✓ Added';
+        button.classList.add('bg-green-500');
+        setTimeout(() => {
+            button.textContent = '🛒 Add';
+            button.classList.remove('bg-green-500');
+        }, 1000);
+
+        // Reset quantity
+        quantities[itemId] = 1;
+        document.getElementById(`quantity-${itemId}`).textContent = 1;
+    }
+
+    // Update cart summary
+    function updateCartSummary() {
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+        document.getElementById('cartTotal').textContent = `${total} EGP`;
+        document.getElementById('cartCount').textContent = count;
+
+        // Update cart badge
+        const badge = document.querySelector('.cart-badge');
+        if (badge) {
+            badge.textContent = count;
+            badge.classList.add('cart-badge');
+        }
+    }
+
+    // Go to checkout
+    function goToCheckout() {
+        if (cart.length === 0) {
+            alert('Your cart is empty!');
+            return;
+        }
+        window.location.href = '/checkout';
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        initializeQuantities();
+        updateCartSummary();
+    });
+
+    // Smooth scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observe all cards
+    document.querySelectorAll('.animate-slide-up').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease-out';
+        observer.observe(card);
+    });
+</script>
+
+{% endblock %}

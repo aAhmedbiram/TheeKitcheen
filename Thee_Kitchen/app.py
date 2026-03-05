@@ -96,7 +96,7 @@ def inject_globals():
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('modern_home.html')
 
 
 @app.route('/menu')
@@ -191,7 +191,7 @@ def menu():
         'dessert': {'name_ar': 'الحلويات', 'name_en': 'Desserts'}
     }
     
-    return render_template('menu.html', 
+    return render_template('modern_menu.html', 
                          categories=categories,
                          category_names=category_names,
                          current_category=category_filter,
@@ -209,7 +209,7 @@ def login():
         
         if not username or not password:
             flash('❌ Please enter both username and password', 'error')
-            return render_template('login.html')
+            return render_template('modern_login.html')
         
         # Find user by username (or email if you prefer)
         user = User.query.filter_by(name=username).first()  # Changed from email to username
@@ -231,7 +231,7 @@ def login():
     
     # Store the next page for redirect after login
     next_page = request.args.get('next')
-    return render_template('login.html', next_page=next_page)
+    return render_template('modern_login.html', next_page=next_page)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -247,7 +247,7 @@ def signup():
         # Validation
         if not name or not email or not password:
             flash('❌ Please fill in all required fields', 'error')
-            return render_template('signup.html')
+            return render_template('modern_signup.html')
         
         # Skip password confirmation check since form doesn't have confirm field
         # if password != confirm_password:
@@ -256,13 +256,13 @@ def signup():
         
         if len(password) < 6:
             flash('❌ Password must be at least 6 characters long', 'error')
-            return render_template('signup.html')
+            return render_template('modern_signup.html')
         
         # Check if user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash('❌ An account with this email already exists', 'error')
-            return render_template('signup.html')
+            return render_template('modern_signup.html')
         
         # Create new user
         new_user = User(
@@ -286,11 +286,11 @@ def signup():
         except Exception as e:
             db.session.rollback()
             flash('❌ Error creating account. Please try again.', 'error')
-            return render_template('signup.html')
+            return render_template('modern_signup.html')
     
     # Store the next page for redirect after signup/login
     next_page = request.args.get('next')
-    return render_template('signup.html', next_page=next_page)
+    return render_template('modern_signup.html', next_page=next_page)
 
 
 @app.route('/change-password', methods=['GET', 'POST'])
@@ -506,7 +506,7 @@ def checkout():
                 'phone': user.phone
             }
     
-    return render_template('checkout.html', 
+    return render_template('modern_checkout.html', 
                      cart=cart,
                      subtotal=subtotal,
                      is_logged_in=is_logged_in,
@@ -637,6 +637,12 @@ def place_order():
         else:
             flash(translations.get(session.get('lang', 'ar'), {}).get('order_error', 'Error creating order. Please try again.'), 'error')
             return redirect(url_for('checkout'))
+
+
+@app.route('/ui-test')
+def ui_test():
+    """Test page for new UI components"""
+    return render_template('ui_test.html')
 
 
 @app.route('/admin/db-info')
